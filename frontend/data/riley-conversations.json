@@ -1,0 +1,114 @@
+{
+  "conversations": [
+    {
+      "conversationId": "+19175698563",
+      "phone": "+19175698563",
+      "customerName": "Rob Bot",
+      "status": "qualified",
+      "step": "appointment_confirmed",
+      "lastMessage": "Hello",
+      "lastActivity": "2025-08-28T13:57:13.340Z",
+      "assignedTo": "Riley",
+      "serviceType": "roofing",
+      "address": "123 easy street ny ny 10065"
+    }
+  ],
+  "messages": [
+    {
+      "conversationId": "+19175698563",
+      "messageId": "1",
+      "sender": "user",
+      "content": "Hello",
+      "timestamp": "2025-08-26T17:15:06.130Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "2",
+      "sender": "riley",
+      "content": "Hi! I'm Riley with Panda Exteriors. I can help you schedule roofing, siding, gutter, or window services. What's your full name?",
+      "timestamp": "2025-08-26T17:15:06.130Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "3",
+      "sender": "user",
+      "content": "Rob TestBot",
+      "timestamp": "2025-08-26T17:15:18.554Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "4",
+      "sender": "riley",
+      "content": "Thanks Rob! What's your complete address?",
+      "timestamp": "2025-08-26T17:15:18.554Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "5",
+      "sender": "user",
+      "content": "123 main st Baltimore Md 21224",
+      "timestamp": "2025-08-26T17:15:37.870Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "6",
+      "sender": "riley",
+      "content": "Perfect! What service do you need?\n\n1. Roofing\n2. Siding\n3. Gutters\n4. Windows\n\nReply with the number.",
+      "timestamp": "2025-08-26T17:15:37.870Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "7",
+      "sender": "user",
+      "content": "1",
+      "timestamp": "2025-08-26T17:15:47.270Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "8",
+      "sender": "riley",
+      "content": "Great! Here are available roofing appointments:\n\n1. Tomorrow 9:00 AM - 11:00 AM\n2. Tomorrow 2:00 PM - 4:00 PM\n\nReply with 1 or 2 to book.",
+      "timestamp": "2025-08-26T17:15:47.270Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "9",
+      "sender": "user",
+      "content": "2",
+      "timestamp": "2025-08-26T17:15:52.750Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "10",
+      "sender": "riley",
+      "content": "Perfect! Your roofing appointment is confirmed for tomorrow 2:00 PM - 4:00 PM. You'll receive a confirmation email shortly. Thank you for choosing Panda Exteriors!",
+      "timestamp": "2025-08-26T17:15:52.750Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "11",
+      "sender": "user",
+      "content": "Hello",
+      "timestamp": "2025-08-28T13:57:13.340Z"
+    },
+    {
+      "conversationId": "+19175698563",
+      "messageId": "12",
+      "sender": "riley",
+      "content": "Hi! I'm Riley with Panda Exteriors. I can help you schedule roofing, siding, gutter, or window services. What's your full name?",
+      "timestamp": "2025-08-28T13:57:13.340Z"
+    }
+  ],
+  "contacts": [
+    {
+      "contactId": "19175698563",
+      "customerName": "Rob Bot",
+      "leadStatus": "qualified",
+      "assignedTo": "Riley",
+      "notes": "Completed roofing appointment booking. Service: Roofing, Address: 123 main st Baltimore Md 21224",
+      "serviceType": "roofing"
+    }
+  ],
+  "agents": [],
+  "last_updated": "2025-08-28T14:51:25.872Z"
+}
