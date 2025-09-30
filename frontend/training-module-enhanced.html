@@ -811,8 +811,16 @@
                     <input type="text" class="form-input" id="company-name" value="Panda Exteriors">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Business Hours</label>
-                    <input type="text" class="form-input" id="company-hours" value="Monday-Friday 8AM-6PM, Saturday 9AM-4PM">
+                    <label class="form-label">Business Description</label>
+                    <textarea class="form-textarea" id="company-description" rows="4" placeholder="Describe your business, mission, and what makes you unique...">Panda Exteriors is a full-service exterior remodeling company specializing in residential and commercial projects. We pride ourselves on quality craftsmanship, exceptional customer service, and using the best materials in the industry.</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Website</label>
+                    <input type="url" class="form-input" id="company-website" value="https://www.pandaexteriors.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Area</label>
+                    <textarea class="form-textarea" id="company-service-area" rows="2" placeholder="Cities, counties, or regions you serve...">Greater Chicago Area, Northern Illinois, Northwest Indiana</textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Phone Number</label>
@@ -824,16 +832,38 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Address</label>
-                    <textarea class="form-textarea" id="company-address">123 Main Street, Suite 100
+                    <textarea class="form-textarea" id="company-address" rows="2">123 Main Street, Suite 100
 City, State 12345</textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Services Offered</label>
-                    <textarea class="form-textarea" id="company-services">Roofing, Siding, Gutters, Windows, Doors, Insulation</textarea>
+                    <label class="form-label">Products/Services Offered</label>
+                    <textarea class="form-textarea" id="company-services" rows="3">Roofing, Siding, Gutters, Windows, Doors, Insulation, Storm Damage Repair, Energy-Efficient Upgrades</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current Discounts & Promotions</label>
+                    <textarea class="form-textarea" id="company-discounts" rows="3" placeholder="Enter current offers, seasonal promotions, or special discounts...">10% off all roofing projects in March | Free gutter inspection with any service | Senior & Military discounts available</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Typical Appointment Duration</label>
+                    <input type="text" class="form-input" id="appointment-duration" value="45-60 minutes" placeholder="e.g., 30 minutes, 1 hour">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Response Time Commitment</label>
                     <input type="text" class="form-input" id="company-response-time" value="Within 24 hours">
+                </div>
+
+                <!-- Advanced Hours Configuration Toggle -->
+                <div class="form-group" style="margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 2rem;">
+                    <button class="btn btn-primary" onclick="toggleAdvancedHours()" style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                        <span>⚙️ Advanced Business Hours Configuration</span>
+                        <span id="hours-toggle-icon">▼</span>
+                    </button>
+                    <div id="advanced-hours-section" style="display: none; margin-top: 1rem; padding: 1rem; background: var(--bg-light-secondary); border-radius: 0.5rem;">
+                        <p style="color: var(--text-light-secondary); margin-bottom: 1rem; font-size: 0.875rem;">
+                            Configure detailed business hours, holidays, and special schedules.
+                        </p>
+                        <iframe src="business-hours-config.html" style="width: 100%; height: 600px; border: 1px solid var(--border-light); border-radius: 0.5rem; background: white;"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1297,6 +1327,20 @@ City, State 12345</textarea>
 
             event.target.classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Toggle advanced hours configuration
+        function toggleAdvancedHours() {
+            const section = document.getElementById('advanced-hours-section');
+            const icon = document.getElementById('hours-toggle-icon');
+
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                icon.textContent = '▲';
+            } else {
+                section.style.display = 'none';
+                icon.textContent = '▼';
+            }
         }
 
         // Render responses

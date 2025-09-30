@@ -778,11 +778,6 @@
                                    readonly>
                         </div>
                     </div>
-
-                    <div class="admin-section">
-                        <h2 class="section-title">Business Hours Configuration</h2>
-                        <iframe src="business-hours-config.html" style="width: 100%; height: 600px; border: 1px solid var(--border-light); border-radius: 8px;"></iframe>
-                    </div>
                 </div>
             </div>
         </div>
@@ -949,20 +944,26 @@
         // Update tab visibility based on permissions
         function updateTabVisibility() {
             const tabMapping = {
-                'conversations': 'kanban',
-                'analytics': 'dashboard',
-                'training': 'training',
-                'admin': 'admin'
+                'conversations': ['kanban', 'crm', 'webchat'], // Conversations permission shows these tabs
+                'analytics': ['dashboard'],
+                'training': ['training'],
+                'admin': ['admin']
             };
 
-            Object.entries(tabMapping).forEach(([permission, tabName]) => {
-                const tab = document.querySelector(`[data-tab="${tabName}"]`);
-                if (tab) {
-                    if (currentUser.permissions.includes(permission)) {
-                        tab.classList.remove('hidden');
-                    } else {
-                        tab.classList.add('hidden');
-                    }
+            // First hide all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Show tabs based on permissions
+            Object.entries(tabMapping).forEach(([permission, tabNames]) => {
+                if (currentUser.permissions.includes(permission)) {
+                    tabNames.forEach(tabName => {
+                        const tab = document.querySelector(`[data-tab="${tabName}"]`);
+                        if (tab) {
+                            tab.classList.remove('hidden');
+                        }
+                    });
                 }
             });
 
