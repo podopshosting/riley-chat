@@ -2,6 +2,7 @@
   "name": "riley-consolidated",
   "version": "1.0.0",
   "dependencies": {
-    "aws-sdk": "^2.1691.0"
+    "aws-sdk": "^2.1691.0",
+    "twilio": "^5.10.1"
   }
 }
