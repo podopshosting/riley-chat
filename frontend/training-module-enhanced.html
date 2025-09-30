@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riley Training Module - Panda Exteriors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --bg-light: #FFFFFF;
+            --bg-light-secondary: #F3F4F6;
+            --text-light: #111827;
+            --text-light-secondary: #6B7280;
+            --border-light: #E5E7EB;
+            --bg-dark: #0F0F23;
+            --bg-dark-secondary: #1A1A2E;
+            --text-dark: #FFFFFF;
+            --text-dark-secondary: #A0A0B8;
+            --border-dark: #2A2A4A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-light-secondary);
+            color: var(--text-light);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* Container */
+        .container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .module-header {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .module-header {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .header-title {
+            color: var(--text-dark);
+        }
+
+        .header-subtitle {
+            color: var(--text-light-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        body.dark-mode .header-subtitle {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-light);
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        body.dark-mode .tabs-container {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.5rem;
+            color: var(--text-light-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        body.dark-mode .tab-button {
+            color: var(--text-dark-secondary);
+        }
+
+        .tab-button:hover {
+            background: var(--bg-light-secondary);
+        }
+
+        body.dark-mode .tab-button:hover {
+            background: var(--bg-dark);
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .section {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .section-title {
+            color: var(--text-dark);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-light-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .form-label {
+            color: var(--text-dark-secondary);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .form-input,
+        body.dark-mode .form-textarea,
+        body.dark-mode .form-select {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light-secondary);
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .btn-secondary {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Response Cards */
+        .response-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+
+        .response-card {
+            background: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            position: relative;
+        }
+
+        body.dark-mode .response-card {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .response-title {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .response-title {
+            color: var(--text-dark);
+        }
+
+        .response-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .response-content {
+            color: var(--text-light-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        body.dark-mode .response-content {
+            color: var(--text-dark-secondary);
+        }
+
+        .response-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tag-sms {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .tag-email {
+            background: rgba(168, 85, 247, 0.1);
+            color: #A855F7;
+        }
+
+        .tag-category {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Thread Messages */
+        .thread-container {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .thread-container {
+            border-top-color: var(--border-dark);
+        }
+
+        .thread-message {
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        body.dark-mode .thread-message {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .thread-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-light-secondary);
+        }
+
+        body.dark-mode .thread-header {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Personality Cards */
+        .personality-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .personality-card {
+            background: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .personality-card {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+        }
+
+        .personality-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .personality-card.active {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .personality-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .personality-traits {
+            font-size: 0.875rem;
+            color: var(--text-light-secondary);
+        }
+
+        body.dark-mode .personality-traits {
+            color: var(--text-dark-secondary);
+        }
+
+        /* Company Info Display */
+        .info-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-light-secondary);
+            text-transform: uppercase;
+        }
+
+        body.dark-mode .info-label {
+            color: var(--text-dark-secondary);
+        }
+
+        .info-value {
+            font-weight: 600;
+        }
+
+        /* Negative Response List */
+        .negative-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .negative-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 0.5rem;
+            color: var(--danger);
+            font-size: 0.875rem;
+        }
+
+        .negative-item button {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .modal-content {
+            background: var(--bg-dark-secondary);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light-secondary);
+        }
+
+        body.dark-mode .empty-state {
+            color: var(--text-dark-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Save Indicator */
+        .save-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .save-indicator.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .response-grid,
+            .personality-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="module-header">
+            <div>
+                <h1 class="header-title">🤖 Riley Training Module</h1>
+                <p class="header-subtitle">Configure responses, personalities, and conversation flows</p>
+            </div>
+            <button class="btn btn-primary" onclick="saveAllSettings()">💾 Save All Changes</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="switchTab('responses')">Response Templates</button>
+            <button class="tab-button" onclick="switchTab('personalities')">Bot Personalities</button>
+            <button class="tab-button" onclick="switchTab('company')">Company Details</button>
+            <button class="tab-button" onclick="switchTab('negative')">Negative Filters</button>
+            <button class="tab-button" onclick="switchTab('threads')">Message Threads</button>
+        </div>
+
+        <!-- Response Templates Tab -->
+        <div class="tab-content active" id="responses-tab">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Response Templates</h2>
+                    <button class="btn btn-primary" onclick="showAddResponseModal()">+ Add Response</button>
+                </div>
+                <div class="response-grid" id="response-grid">
+                    <!-- Responses will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bot Personalities Tab -->
+        <div class="tab-content" id="personalities-tab">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Bot Personalities</h2>
+                    <button class="btn btn-primary" onclick="showAddPersonalityModal()">+ Add Personality</button>
+                </div>
+                <div class="personality-grid" id="personality-grid">
+                    <!-- Personalities will be loaded here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Active Personality Settings</h3>
+                <div class="form-group">
+                    <label class="form-label">Select Active Bot</label>
+                    <select class="form-select" id="active-bot-select" onchange="updateActiveBot()">
+                        <option value="">Select a bot personality...</option>
+                    </select>
+                </div>
+                <div id="active-bot-details" style="display: none;">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Bot Name</span>
+                            <span class="info-value" id="active-bot-name">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tone</span>
+                            <span class="info-value" id="active-bot-tone">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Style</span>
+                            <span class="info-value" id="active-bot-style">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Details Tab -->
+        <div class="tab-content" id="company-tab">
+            <div class="section">
+                <h2 class="section-title">Company Information</h2>
+                <div class="form-group">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" class="form-input" id="company-name" value="Panda Exteriors">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Business Hours</label>
+                    <input type="text" class="form-input" id="company-hours" value="Monday-Friday 8AM-6PM, Saturday 9AM-4PM">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" class="form-input" id="company-phone" value="1-888-PANDA-EX">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="company-email" value="info@pandaexteriors.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-textarea" id="company-address">123 Main Street, Suite 100
+City, State 12345</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Services Offered</label>
+                    <textarea class="form-textarea" id="company-services">Roofing, Siding, Gutters, Windows, Doors, Insulation</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Response Time Commitment</label>
+                    <input type="text" class="form-input" id="company-response-time" value="Within 24 hours">
+                </div>
+            </div>
+        </div>
+
+        <!-- Negative Filters Tab -->
+        <div class="tab-content" id="negative-tab">
+            <div class="section">
+                <h2 class="section-title">Negative Response Filters</h2>
+                <p style="margin-bottom: 1rem; color: var(--text-light-secondary);">
+                    These phrases and topics will be avoided in all bot responses.
+                </p>
+                <div class="form-group">
+                    <label class="form-label">Add Negative Phrase/Topic</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" class="form-input" id="negative-input" placeholder="Enter phrase to avoid...">
+                        <button class="btn btn-danger" onclick="addNegativePhrase()">Add</button>
+                    </div>
+                </div>
+                <div class="negative-list" id="negative-list">
+                    <!-- Negative phrases will be shown here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Compliance Rules</h2>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="no-medical-advice" checked> Never give medical advice
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="no-legal-advice" checked> Never give legal advice
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="no-guarantees" checked> Never guarantee specific outcomes
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="no-pricing" checked> Never quote specific prices without consultation
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Threads Tab -->
+        <div class="tab-content" id="threads-tab">
+            <div class="section">
+                <h2 class="section-title">Multi-Channel Threading</h2>
+                <p style="margin-bottom: 1rem; color: var(--text-light-secondary);">
+                    Configure follow-up sequences for different channels and scenarios.
+                </p>
+                <div class="section-header">
+                    <h3>Active Threads</h3>
+                    <button class="btn btn-primary" onclick="showAddThreadModal()">+ New Thread</button>
+                </div>
+                <div id="threads-list">
+                    <!-- Threads will be shown here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Response Modal -->
+    <div class="modal" id="response-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Response Template</h2>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-input" id="response-category" placeholder="e.g., Greeting, Appointment, Quote">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Trigger Keywords</label>
+                <input type="text" class="form-input" id="response-triggers" placeholder="e.g., hello, hi, hey (comma-separated)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Response Template</label>
+                <textarea class="form-textarea" id="response-template" placeholder="Enter the response template..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Channels</label>
+                <label style="margin-right: 1rem;">
+                    <input type="checkbox" id="channel-sms" checked> SMS
+                </label>
+                <label>
+                    <input type="checkbox" id="channel-email"> Email
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Follow-up Messages (Optional)</label>
+                <div id="followup-container">
+                    <button class="btn btn-secondary btn-sm" onclick="addFollowupField()">+ Add Follow-up</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('response-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveResponse()">Save Response</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Personality Modal -->
+    <div class="modal" id="personality-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Bot Personality</h2>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Bot Name</label>
+                <input type="text" class="form-input" id="bot-name" placeholder="e.g., Riley, Alex, Sam">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Personality Traits</label>
+                <textarea class="form-textarea" id="bot-traits" placeholder="e.g., Friendly, professional, helpful, knowledgeable about home improvement"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tone</label>
+                <select class="form-select" id="bot-tone">
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="casual">Casual</option>
+                    <option value="formal">Formal</option>
+                    <option value="enthusiastic">Enthusiastic</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Response Style</label>
+                <select class="form-select" id="bot-style">
+                    <option value="concise">Concise</option>
+                    <option value="detailed">Detailed</option>
+                    <option value="conversational">Conversational</option>
+                    <option value="educational">Educational</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Greeting Style</label>
+                <input type="text" class="form-input" id="bot-greeting" placeholder="e.g., Hi there! I'm Riley from Panda Exteriors.">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('personality-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="savePersonality()">Save Personality</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Thread Modal -->
+    <div class="modal" id="thread-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Message Thread</h2>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Thread Name</label>
+                <input type="text" class="form-input" id="thread-name" placeholder="e.g., New Lead Follow-up">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Trigger Event</label>
+                <select class="form-select" id="thread-trigger">
+                    <option value="new_lead">New Lead</option>
+                    <option value="no_response">No Response (24h)</option>
+                    <option value="appointment_reminder">Appointment Reminder</option>
+                    <option value="quote_followup">Quote Follow-up</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Messages</label>
+                <div id="thread-messages">
+                    <div class="thread-message-input" style="margin-bottom: 1rem;">
+                        <input type="text" class="form-input" placeholder="Delay (e.g., 0h, 24h, 3d)" style="width: 100px; display: inline-block;">
+                        <select class="form-select" style="width: 100px; display: inline-block;">
+                            <option value="sms">SMS</option>
+                            <option value="email">Email</option>
+                        </select>
+                        <textarea class="form-textarea" placeholder="Message content..." style="margin-top: 0.5rem;"></textarea>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="addThreadMessage()">+ Add Message</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('thread-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveThread()">Save Thread</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="save-indicator">
+        ✅ Settings saved successfully!
+    </div>
+
+    <script>
+        // Storage keys
+        const STORAGE_KEYS = {
+            responses: 'riley_responses',
+            personalities: 'riley_personalities',
+            company: 'riley_company',
+            negative: 'riley_negative',
+            threads: 'riley_threads',
+            activeBot: 'riley_active_bot'
+        };
+
+        // Data storage
+        let data = {
+            responses: [],
+            personalities: [],
+            company: {},
+            negative: [],
+            threads: [],
+            activeBot: null
+        };
+
+        // Initialize
+        function init() {
+            loadAllData();
+            renderResponses();
+            renderPersonalities();
+            renderCompanyInfo();
+            renderNegativeList();
+            renderThreads();
+            checkDarkMode();
+        }
+
+        // Load all data from localStorage
+        function loadAllData() {
+            data.responses = JSON.parse(localStorage.getItem(STORAGE_KEYS.responses)) || getDefaultResponses();
+            data.personalities = JSON.parse(localStorage.getItem(STORAGE_KEYS.personalities)) || getDefaultPersonalities();
+            data.company = JSON.parse(localStorage.getItem(STORAGE_KEYS.company)) || getDefaultCompany();
+            data.negative = JSON.parse(localStorage.getItem(STORAGE_KEYS.negative)) || getDefaultNegative();
+            data.threads = JSON.parse(localStorage.getItem(STORAGE_KEYS.threads)) || [];
+            data.activeBot = localStorage.getItem(STORAGE_KEYS.activeBot) || null;
+        }
+
+        // Get default responses
+        function getDefaultResponses() {
+            return [
+                {
+                    id: Date.now(),
+                    category: 'Greeting',
+                    triggers: ['hello', 'hi', 'hey'],
+                    template: "Hi! I'm Riley from Panda Exteriors. How can I help you with your home improvement needs today?",
+                    channels: ['sms', 'email'],
+                    followups: []
+                },
+                {
+                    id: Date.now() + 1,
+                    category: 'Appointment',
+                    triggers: ['appointment', 'schedule', 'meeting'],
+                    template: "I'd be happy to schedule an appointment for you! What day and time work best for your inspection?",
+                    channels: ['sms'],
+                    followups: [
+                        { delay: '1h', message: 'Just following up - did you have a chance to check your calendar?' }
+                    ]
+                }
+            ];
+        }
+
+        // Get default personalities
+        function getDefaultPersonalities() {
+            return [
+                {
+                    id: Date.now(),
+                    name: 'Riley',
+                    traits: 'Friendly, professional, helpful, knowledgeable about home improvement',
+                    tone: 'friendly',
+                    style: 'conversational',
+                    greeting: "Hi there! I'm Riley from Panda Exteriors."
+                }
+            ];
+        }
+
+        // Get default company info
+        function getDefaultCompany() {
+            return {
+                name: 'Panda Exteriors',
+                hours: 'Monday-Friday 8AM-6PM, Saturday 9AM-4PM',
+                phone: '1-888-PANDA-EX',
+                email: 'info@pandaexteriors.com',
+                address: '123 Main Street, Suite 100\nCity, State 12345',
+                services: 'Roofing, Siding, Gutters, Windows, Doors, Insulation',
+                responseTime: 'Within 24 hours'
+            };
+        }
+
+        // Get default negative phrases
+        function getDefaultNegative() {
+            return [
+                'guarantee',
+                'lawsuit',
+                'competitor pricing',
+                'bad reviews',
+                'complaints'
+            ];
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Render responses
+        function renderResponses() {
+            const grid = document.getElementById('response-grid');
+
+            if (data.responses.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-icon">📝</div>
+                        <p>No response templates yet</p>
+                        <button class="btn btn-primary" onclick="showAddResponseModal()">Add First Response</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = data.responses.map(response => `
+                <div class="response-card">
+                    <div class="response-header">
+                        <div class="response-title">${response.category}</div>
+                        <div class="response-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="editResponse(${response.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteResponse(${response.id})">🗑</button>
+                        </div>
+                    </div>
+                    <div class="response-content">${response.template}</div>
+                    <div class="response-meta">
+                        <span class="tag tag-category">Triggers: ${response.triggers.join(', ')}</span>
+                        ${response.channels.map(ch => `<span class="tag tag-${ch}">${ch}</span>`).join('')}
+                    </div>
+                    ${response.followups && response.followups.length > 0 ? `
+                        <div class="thread-container">
+                            <strong style="font-size: 0.75rem;">Follow-ups:</strong>
+                            ${response.followups.map(f => `
+                                <div class="thread-message">
+                                    <div class="thread-header">
+                                        <span>After ${f.delay}</span>
+                                        <span>${f.channel || 'SMS'}</span>
+                                    </div>
+                                    <div>${f.message}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Render personalities
+        function renderPersonalities() {
+            const grid = document.getElementById('personality-grid');
+            const select = document.getElementById('active-bot-select');
+
+            grid.innerHTML = data.personalities.map(bot => `
+                <div class="personality-card ${data.activeBot === bot.id ? 'active' : ''}"
+                     onclick="selectPersonality(${bot.id})">
+                    <div class="personality-name">${bot.name}</div>
+                    <div class="personality-traits">${bot.traits}</div>
+                    <div style="margin-top: 0.5rem;">
+                        <span class="tag tag-category">${bot.tone}</span>
+                        <span class="tag tag-sms">${bot.style}</span>
+                    </div>
+                    <div class="response-actions" style="margin-top: 0.5rem;">
+                        <button class="btn btn-sm btn-secondary" onclick="editPersonality(${bot.id}); event.stopPropagation();">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="deletePersonality(${bot.id}); event.stopPropagation();">🗑</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update select dropdown
+            select.innerHTML = '<option value="">Select a bot personality...</option>' +
+                data.personalities.map(bot =>
+                    `<option value="${bot.id}" ${data.activeBot == bot.id ? 'selected' : ''}>${bot.name}</option>`
+                ).join('');
+
+            // Update active bot details
+            if (data.activeBot) {
+                const activeBot = data.personalities.find(b => b.id == data.activeBot);
+                if (activeBot) {
+                    document.getElementById('active-bot-details').style.display = 'block';
+                    document.getElementById('active-bot-name').textContent = activeBot.name;
+                    document.getElementById('active-bot-tone').textContent = activeBot.tone;
+                    document.getElementById('active-bot-style').textContent = activeBot.style;
+                }
+            }
+        }
+
+        // Render company info
+        function renderCompanyInfo() {
+            document.getElementById('company-name').value = data.company.name || '';
+            document.getElementById('company-hours').value = data.company.hours || '';
+            document.getElementById('company-phone').value = data.company.phone || '';
+            document.getElementById('company-email').value = data.company.email || '';
+            document.getElementById('company-address').value = data.company.address || '';
+            document.getElementById('company-services').value = data.company.services || '';
+            document.getElementById('company-response-time').value = data.company.responseTime || '';
+        }
+
+        // Render negative list
+        function renderNegativeList() {
+            const list = document.getElementById('negative-list');
+            list.innerHTML = data.negative.map(phrase => `
+                <div class="negative-item">
+                    ${phrase}
+                    <button onclick="removeNegative('${phrase}')">✕</button>
+                </div>
+            `).join('');
+        }
+
+        // Render threads
+        function renderThreads() {
+            const list = document.getElementById('threads-list');
+
+            if (data.threads.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔗</div>
+                        <p>No message threads configured</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = data.threads.map(thread => `
+                <div class="response-card">
+                    <div class="response-header">
+                        <div class="response-title">${thread.name}</div>
+                        <div class="response-actions">
+                            <button class="btn btn-sm btn-danger" onclick="deleteThread(${thread.id})">🗑</button>
+                        </div>
+                    </div>
+                    <div class="response-content">Trigger: ${thread.trigger}</div>
+                    <div class="thread-container">
+                        ${thread.messages.map(msg => `
+                            <div class="thread-message">
+                                <div class="thread-header">
+                                    <span>After ${msg.delay}</span>
+                                    <span class="tag tag-${msg.channel}">${msg.channel}</span>
+                                </div>
+                                <div>${msg.content}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal functions
+        function showAddResponseModal() {
+            document.getElementById('response-modal').classList.add('active');
+        }
+
+        function showAddPersonalityModal() {
+            document.getElementById('personality-modal').classList.add('active');
+        }
+
+        function showAddThreadModal() {
+            document.getElementById('thread-modal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Add follow-up field
+        let followupCount = 0;
+        function addFollowupField() {
+            const container = document.getElementById('followup-container');
+            const div = document.createElement('div');
+            div.style.marginBottom = '0.5rem';
+            div.innerHTML = `
+                <input type="text" class="form-input" placeholder="Delay (e.g., 1h, 24h)" style="width: 100px; display: inline-block;">
+                <select class="form-select" style="width: 100px; display: inline-block; margin: 0 0.5rem;">
+                    <option value="sms">SMS</option>
+                    <option value="email">Email</option>
+                </select>
+                <input type="text" class="form-input" placeholder="Follow-up message..." style="width: calc(100% - 230px); display: inline-block;">
+            `;
+            container.insertBefore(div, container.firstChild);
+        }
+
+        // Add thread message
+        function addThreadMessage() {
+            const container = document.getElementById('thread-messages');
+            const div = document.createElement('div');
+            div.className = 'thread-message-input';
+            div.style.marginBottom = '1rem';
+            div.innerHTML = `
+                <input type="text" class="form-input" placeholder="Delay (e.g., 0h, 24h, 3d)" style="width: 100px; display: inline-block;">
+                <select class="form-select" style="width: 100px; display: inline-block;">
+                    <option value="sms">SMS</option>
+                    <option value="email">Email</option>
+                </select>
+                <textarea class="form-textarea" placeholder="Message content..." style="margin-top: 0.5rem;"></textarea>
+            `;
+            container.appendChild(div);
+        }
+
+        // Save response
+        function saveResponse() {
+            const response = {
+                id: Date.now(),
+                category: document.getElementById('response-category').value,
+                triggers: document.getElementById('response-triggers').value.split(',').map(t => t.trim()),
+                template: document.getElementById('response-template').value,
+                channels: [],
+                followups: []
+            };
+
+            if (document.getElementById('channel-sms').checked) response.channels.push('sms');
+            if (document.getElementById('channel-email').checked) response.channels.push('email');
+
+            // Collect follow-ups
+            const followupDivs = document.querySelectorAll('#followup-container > div');
+            followupDivs.forEach(div => {
+                const inputs = div.querySelectorAll('input, select');
+                if (inputs[0].value && inputs[2].value) {
+                    response.followups.push({
+                        delay: inputs[0].value,
+                        channel: inputs[1].value,
+                        message: inputs[2].value
+                    });
+                }
+            });
+
+            data.responses.push(response);
+            localStorage.setItem(STORAGE_KEYS.responses, JSON.stringify(data.responses));
+            renderResponses();
+            closeModal('response-modal');
+            showSaveIndicator();
+        }
+
+        // Save personality
+        function savePersonality() {
+            const personality = {
+                id: Date.now(),
+                name: document.getElementById('bot-name').value,
+                traits: document.getElementById('bot-traits').value,
+                tone: document.getElementById('bot-tone').value,
+                style: document.getElementById('bot-style').value,
+                greeting: document.getElementById('bot-greeting').value
+            };
+
+            data.personalities.push(personality);
+            localStorage.setItem(STORAGE_KEYS.personalities, JSON.stringify(data.personalities));
+            renderPersonalities();
+            closeModal('personality-modal');
+            showSaveIndicator();
+        }
+
+        // Save thread
+        function saveThread() {
+            const thread = {
+                id: Date.now(),
+                name: document.getElementById('thread-name').value,
+                trigger: document.getElementById('thread-trigger').value,
+                messages: []
+            };
+
+            const messageDivs = document.querySelectorAll('.thread-message-input');
+            messageDivs.forEach(div => {
+                const inputs = div.querySelectorAll('input, select, textarea');
+                if (inputs[0].value && inputs[2].value) {
+                    thread.messages.push({
+                        delay: inputs[0].value,
+                        channel: inputs[1].value,
+                        content: inputs[2].value
+                    });
+                }
+            });
+
+            data.threads.push(thread);
+            localStorage.setItem(STORAGE_KEYS.threads, JSON.stringify(data.threads));
+            renderThreads();
+            closeModal('thread-modal');
+            showSaveIndicator();
+        }
+
+        // Delete functions
+        function deleteResponse(id) {
+            data.responses = data.responses.filter(r => r.id !== id);
+            localStorage.setItem(STORAGE_KEYS.responses, JSON.stringify(data.responses));
+            renderResponses();
+        }
+
+        function deletePersonality(id) {
+            data.personalities = data.personalities.filter(p => p.id !== id);
+            localStorage.setItem(STORAGE_KEYS.personalities, JSON.stringify(data.personalities));
+            renderPersonalities();
+        }
+
+        function deleteThread(id) {
+            data.threads = data.threads.filter(t => t.id !== id);
+            localStorage.setItem(STORAGE_KEYS.threads, JSON.stringify(data.threads));
+            renderThreads();
+        }
+
+        // Select personality
+        function selectPersonality(id) {
+            data.activeBot = id;
+            localStorage.setItem(STORAGE_KEYS.activeBot, id);
+            renderPersonalities();
+        }
+
+        // Update active bot
+        function updateActiveBot() {
+            const select = document.getElementById('active-bot-select');
+            data.activeBot = select.value;
+            localStorage.setItem(STORAGE_KEYS.activeBot, select.value);
+            renderPersonalities();
+        }
+
+        // Add negative phrase
+        function addNegativePhrase() {
+            const input = document.getElementById('negative-input');
+            if (input.value) {
+                data.negative.push(input.value);
+                localStorage.setItem(STORAGE_KEYS.negative, JSON.stringify(data.negative));
+                renderNegativeList();
+                input.value = '';
+            }
+        }
+
+        // Remove negative phrase
+        function removeNegative(phrase) {
+            data.negative = data.negative.filter(n => n !== phrase);
+            localStorage.setItem(STORAGE_KEYS.negative, JSON.stringify(data.negative));
+            renderNegativeList();
+        }
+
+        // Save all settings
+        function saveAllSettings() {
+            // Save company info
+            data.company = {
+                name: document.getElementById('company-name').value,
+                hours: document.getElementById('company-hours').value,
+                phone: document.getElementById('company-phone').value,
+                email: document.getElementById('company-email').value,
+                address: document.getElementById('company-address').value,
+                services: document.getElementById('company-services').value,
+                responseTime: document.getElementById('company-response-time').value
+            };
+            localStorage.setItem(STORAGE_KEYS.company, JSON.stringify(data.company));
+
+            // Save compliance rules
+            const compliance = {
+                noMedicalAdvice: document.getElementById('no-medical-advice').checked,
+                noLegalAdvice: document.getElementById('no-legal-advice').checked,
+                noGuarantees: document.getElementById('no-guarantees').checked,
+                noPricing: document.getElementById('no-pricing').checked
+            };
+            localStorage.setItem('riley_compliance', JSON.stringify(compliance));
+
+            showSaveIndicator();
+        }
+
+        // Show save indicator
+        function showSaveIndicator() {
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // Check dark mode from parent
+        function checkDarkMode() {
+            try {
+                if (window.parent && window.parent.document) {
+                    if (window.parent.document.body.classList.contains('dark-mode')) {
+                        document.body.classList.add('dark-mode');
+                    }
+                }
+            } catch (e) {
+                // Cross-origin, check localStorage
+                if (localStorage.getItem('riley_theme') === 'dark') {
+                    document.body.classList.add('dark-mode');
+                }
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+
+        // Listen for storage changes (sync across tabs)
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.startsWith('riley_')) {
+                loadAllData();
+                init();
+            }
+        });
+    </script>
+</body>
+</html>

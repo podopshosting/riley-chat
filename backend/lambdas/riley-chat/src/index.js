@@ -1,6 +1,8 @@
 const dynamodb = require('/opt/nodejs/dynamodb-client');
 const secretsManager = require('/opt/nodejs/secrets-manager');
 const RileyAI = require('/opt/nodejs/riley-ai');
+const openaiClient = require('/opt/nodejs/openai-client');
+const podopsClient = require('/opt/nodejs/podops-client');
 
 exports.handler = async (event) => {
     console.log('Riley Chat Lambda triggered:', JSON.stringify(event));
@@ -13,14 +15,14 @@ exports.handler = async (event) => {
 
     try {
         const body = JSON.parse(event.body || '{}');
-        const { message, phoneNumber, conversationId } = body;
+        const { message, phoneNumber, email, conversationId, channel = 'sms', useAI = true } = body;
 
-        if (!message || !phoneNumber) {
+        if (!message || (!phoneNumber && !email)) {
             return {
                 statusCode: 400,
                 headers,
                 body: JSON.stringify({
-                    error: 'Message and phoneNumber are required'
+                    error: 'Message and either phoneNumber or email are required'
                 })
             };
         }
@@ -34,8 +36,10 @@ exports.handler = async (event) => {
         if (!conversation) {
             conversation = await dynamodb.saveConversation({
                 phoneNumber,
+                email,
                 messages: [],
                 status: 'active',
+                channel,
                 metadata: {
                     source: 'web',
                     startTime: new Date().toISOString()
@@ -50,19 +54,65 @@ exports.handler = async (event) => {
             timestamp: Date.now()
         });
 
-        // Generate AI response
-        const rileyAI = new RileyAI();
-        const response = await rileyAI.generateResponse(message, phoneNumber, {
-            conversationHistory: conversation.messages,
-            metadata: conversation.metadata
-        });
+        // Analyze intent with ChatGPT
+        let intentAnalysis = null;
+        if (useAI) {
+            intentAnalysis = await openaiClient.analyzeIntent(message);
+            console.log('Intent analysis:', intentAnalysis);
+        }
+
+        // Generate response
+        let response;
+        if (useAI) {
+            // Get training data and personality from settings
+            const settings = await dynamodb.getSettings();
+            const context = {
+                companyName: settings?.company?.name || 'Panda Exteriors',
+                personality: settings?.activeBot?.personality || 'Professional and friendly',
+                companyDetails: settings?.company || {},
+                negativeFilters: settings?.negative || [],
+                threadHistory: conversation.messages.slice(-5) // Last 5 messages for context
+            };
+
+            // Generate AI response with ChatGPT
+            response = await openaiClient.generateResponse(message, context);
+        } else {
+            // Fall back to RileyAI
+            const rileyAI = new RileyAI();
+            response = await rileyAI.generateResponse(message, phoneNumber || email, {
+                conversationHistory: conversation.messages,
+                metadata: conversation.metadata
+            });
+        }
+
+        // Send response through appropriate channel
+        if (channel === 'email' && email) {
+            await podopsClient.sendEmail(
+                email,
+                `Re: ${intentAnalysis?.suggestedAction || 'Your inquiry'}`,
+                response,
+                conversation.conversationId
+            );
+        } else if (phoneNumber) {
+            await podopsClient.sendSMS(
+                phoneNumber,
+                response,
+                conversation.conversationId
+            );
+        }
 
         // Add Riley's response
         await dynamodb.addMessage(conversation.conversationId, {
             role: 'assistant',
             content: response,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            intent: intentAnalysis
         });
+
+        // Sync with PandaAdmin if it's a qualified lead
+        if (intentAnalysis?.intent === 'booking' || intentAnalysis?.urgency === 'high') {
+            await podopsClient.syncWithPandaAdmin(conversation.conversationId);
+        }
 
         return {
             statusCode: 200,
