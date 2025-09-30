@@ -676,6 +676,12 @@
                     <button class="nav-tab" data-tab="training" onclick="switchTab('training')">
                         Training
                     </button>
+                    <button class="nav-tab" data-tab="crm" onclick="switchTab('crm')">
+                        CRM
+                    </button>
+                    <button class="nav-tab" data-tab="webchat" onclick="switchTab('webchat')">
+                        Web Chat
+                    </button>
                     <button class="nav-tab" data-tab="admin" id="adminTab" onclick="switchTab('admin')">
                         Admin
                     </button>
@@ -716,6 +722,16 @@
             <!-- Training Tab -->
             <div class="tab-content" id="training-tab">
                 <iframe src="training-module-enhanced.html" class="tab-frame" id="trainingFrame"></iframe>
+            </div>
+
+            <!-- CRM Tab -->
+            <div class="tab-content" id="crm-tab">
+                <iframe src="crm-contacts.html" class="tab-frame" id="crmFrame"></iframe>
+            </div>
+
+            <!-- Web Chat Tab -->
+            <div class="tab-content" id="webchat-tab">
+                <iframe src="web-chat-embed.html" class="tab-frame" id="webchatFrame"></iframe>
             </div>
 
             <!-- Admin Tab -->

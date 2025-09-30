@@ -109,9 +109,29 @@ exports.handler = async (event) => {
             intent: intentAnalysis
         });
 
-        // Sync with PandaAdmin if it's a qualified lead
-        if (intentAnalysis?.intent === 'booking' || intentAnalysis?.urgency === 'high') {
+        // Handle appointment booking
+        let appointmentStatus = null;
+        if (intentAnalysis?.intent === 'booking' || intentAnalysis?.intent === 'appointment') {
+            appointmentStatus = {
+                requested: true,
+                timestamp: Date.now(),
+                status: 'pending_confirmation'
+            };
+
+            // Update conversation with appointment flag
+            await dynamodb.updateConversation(conversation.conversationId, {
+                appointmentRequested: true,
+                appointmentStatus: 'pending_confirmation',
+                leadStatus: 'engaged'
+            });
+
+            // Sync with PandaAdmin if it's a qualified lead
             await podopsClient.syncWithPandaAdmin(conversation.conversationId);
+        } else if (intentAnalysis?.urgency === 'high') {
+            // High urgency but not booking - mark as qualified
+            await dynamodb.updateConversation(conversation.conversationId, {
+                leadStatus: 'qualified'
+            });
         }
 
         return {
@@ -120,6 +140,8 @@ exports.handler = async (event) => {
             body: JSON.stringify({
                 conversationId: conversation.conversationId,
                 response,
+                intent: intentAnalysis,
+                appointmentStatus: appointmentStatus,
                 timestamp: Date.now()
             })
         };
