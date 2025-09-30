@@ -1,7 +1,8 @@
 const AWS = require('aws-sdk');
 
 // Initialize AWS services
-const secretsManager = new AWS.SecretsManager({ region: 'us-east-2' });
+// Use current Lambda region instead of hardcoding
+const secretsManager = new AWS.SecretsManager({ region: process.env.AWS_REGION });
 
 // Helper function to get secrets
 async function getSecret(secretName) {
