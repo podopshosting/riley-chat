@@ -164,6 +164,15 @@
             transform: translateY(-2px);
         }
 
+        /* Campaign dropdown menu */
+        #campaign-menu a:hover {
+            background: var(--bg-hover);
+        }
+
+        body.dark-mode #campaign-menu a:hover {
+            background: rgba(74, 158, 255, 0.2);
+        }
+
         /* Kanban Board */
         .kanban-container {
             display: flex;
@@ -536,6 +545,26 @@
         </div>
         <div class="header-right">
             <input type="text" class="filter-input" placeholder="Search by name or phone..." id="search-input">
+            <div class="dropdown" style="display: inline-block; position: relative;">
+                <button class="btn" onclick="toggleCampaignMenu()" id="campaign-btn" style="background: linear-gradient(135deg, #6D1A86, #2CC5FF); color: white;">
+                    📧 Campaigns
+                </button>
+                <div id="campaign-menu" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 0.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.5rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); min-width: 200px; z-index: 1000;">
+                    <a href="#" onclick="openCampaignBuilder('sms'); return false;" style="display: block; padding: 0.75rem 1rem; color: var(--text-primary); text-decoration: none; transition: background 0.2s;">
+                        📱 Create SMS Campaign
+                    </a>
+                    <a href="#" onclick="openCampaignBuilder('email'); return false;" style="display: block; padding: 0.75rem 1rem; color: var(--text-primary); text-decoration: none; transition: background 0.2s;">
+                        ✉️ Create Email Campaign
+                    </a>
+                    <hr style="margin: 0.5rem 0; border-color: var(--border-color);">
+                    <a href="#" onclick="openCampaignList('sms'); return false;" style="display: block; padding: 0.75rem 1rem; color: var(--text-primary); text-decoration: none; transition: background 0.2s;">
+                        📋 View SMS Campaigns
+                    </a>
+                    <a href="#" onclick="openCampaignList('email'); return false;" style="display: block; padding: 0.75rem 1rem; color: var(--text-primary); text-decoration: none; transition: background 0.2s;">
+                        📋 View Email Campaigns
+                    </a>
+                </div>
+            </div>
             <button class="btn" onclick="refreshData()">Refresh</button>
         </div>
     </div>
@@ -917,6 +946,75 @@
 
         function refreshData() {
             KanbanBoard.loadConversations();
+        }
+
+        // Campaign menu functions
+        function toggleCampaignMenu() {
+            const menu = document.getElementById('campaign-menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('campaign-menu');
+            const btn = document.getElementById('campaign-btn');
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        // Get auth token from parent or localStorage
+        function getAuthToken() {
+            // Try to get token from parent window (if in iframe)
+            try {
+                if (window.parent !== window && window.parent.localStorage) {
+                    return window.parent.localStorage.getItem('authToken') ||
+                           window.parent.localStorage.getItem('riley_auth');
+                }
+            } catch (e) {
+                // Cross-origin, use own storage
+            }
+
+            // Use own localStorage
+            return localStorage.getItem('authToken') ||
+                   localStorage.getItem('riley_auth') ||
+                   localStorage.getItem('adminToken');
+        }
+
+        // Open campaign builder
+        function openCampaignBuilder(type) {
+            const token = getAuthToken();
+            let url;
+
+            if (type === 'sms') {
+                url = `https://www.mypodops.com/connect/sms-builder${token ? '?token=' + token : ''}`;
+            } else if (type === 'email') {
+                url = `https://www.mypodops.com/connect/email-builder${token ? '?token=' + token : ''}`;
+            }
+
+            // Open in new window
+            window.open(url, '_blank', 'width=1400,height=900');
+
+            // Close menu
+            document.getElementById('campaign-menu').style.display = 'none';
+        }
+
+        // Open campaign list
+        function openCampaignList(type) {
+            const token = getAuthToken();
+            let url;
+
+            if (type === 'sms') {
+                url = `https://www.mypodops.com/connect/sms-campaigns${token ? '?token=' + token : ''}`;
+            } else if (type === 'email') {
+                url = `https://www.mypodops.com/connect/email-campaigns${token ? '?token=' + token : ''}`;
+            }
+
+            // Open in new window
+            window.open(url, '_blank', 'width=1400,height=900');
+
+            // Close menu
+            document.getElementById('campaign-menu').style.display = 'none';
         }
 
         // Initialize on load
