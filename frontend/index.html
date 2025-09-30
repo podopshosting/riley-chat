@@ -441,6 +441,7 @@
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
+    <script src="riley-api.js"></script>
 </head>
 <body>
     <!-- Login Screen -->
@@ -1699,7 +1700,8 @@
         
         function loadLiveConversations() {
             // Poll for new conversations from S3 bucket
-            fetch('https://riley-dashboard-1754514173.s3.amazonaws.com/conversations.json?t=' + Date.now())
+            // Use relative path for same-origin request, or API endpoint for live data
+            fetch('./conversations.json?t=' + Date.now())
                 .then(response => {
                     console.log('Conversations fetch response:', response.status);
                     return response.json();
