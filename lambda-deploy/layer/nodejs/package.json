@@ -1,0 +1,12 @@
+{
+  "name": "podops-universal-user-api",
+  "version": "1.0.0",
+  "description": "Universal user API for PodOps",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.1490.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.0"
+  }
+}
