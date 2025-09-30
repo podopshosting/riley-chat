@@ -1,0 +1,9 @@
+{
+  "name": "riley-shared-layer",
+  "version": "1.0.0",
+  "description": "Shared dependencies for Riley Lambda functions",
+  "dependencies": {
+    "aws-sdk": "^2.1691.0",
+    "twilio": "^5.3.1"
+  }
+}

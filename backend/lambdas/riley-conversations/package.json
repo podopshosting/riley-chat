@@ -1,0 +1,11 @@
+{
+  "name": "riley-conversations-lambda",
+  "version": "2.0.0",
+  "description": "Riley Conversations Management Lambda Function",
+  "main": "src/index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

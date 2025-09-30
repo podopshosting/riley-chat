@@ -1,0 +1,13 @@
+{
+  "name": "riley-twilio-lambda",
+  "version": "2.0.0",
+  "description": "Riley Twilio Webhook Lambda Function",
+  "main": "src/index.js",
+  "dependencies": {
+    "twilio": "^5.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
