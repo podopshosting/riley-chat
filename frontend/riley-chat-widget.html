@@ -5,774 +5,554 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riley Chat Widget</title>
     <style>
-        /* Chat Widget Styles */
-        #riley-chat-widget {
-            --primary-color: #4F46E5;
-            --primary-hover: #4338CA;
-            --success-color: #10B981;
-            --text-color: #111827;
-            --bg-color: #FFFFFF;
-            --shadow: 0 10px 40px rgba(0,0,0,0.15);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* Floating Chat Button */
+        #riley-chat-trigger {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            z-index: 999999;
-        }
-
-        /* Chat Button */
-        .riley-chat-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            background: linear-gradient(135deg, #9ACD32, #F26924);
+            color: white;
             border: none;
-            box-shadow: var(--shadow);
+            border-radius: 50px;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            box-shadow: 0 8px 24px rgba(154, 205, 50, 0.4);
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
+            gap: 10px;
+            z-index: 999999;
+            transition: all 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
-        .riley-chat-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 50px rgba(79, 70, 229, 0.4);
+        #riley-chat-trigger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(154, 205, 50, 0.6);
         }
 
-        .riley-chat-button svg {
-            width: 30px;
-            height: 30px;
-            fill: white;
-        }
-
-        .riley-unread-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #EF4444;
-            color: white;
+        #riley-chat-trigger .chat-icon {
             width: 24px;
             height: 24px;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 600;
-            border: 3px solid white;
         }
 
-        .riley-unread-badge.show {
-            display: flex;
-        }
-
-        /* Chat Window */
-        .riley-chat-window {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
+        /* Main Chat Box */
+        #riley-desktop-chat-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             width: 380px;
-            max-width: calc(100vw - 40px);
-            height: 600px;
-            max-height: calc(100vh - 120px);
-            background: var(--bg-color);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
+            z-index: 1000000;
             display: none;
-            flex-direction: column;
-            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        #riley-desktop-chat-box.visible {
+            display: block;
             animation: slideUp 0.3s ease;
         }
 
-        .riley-chat-window.show {
-            display: flex;
-        }
-
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Chat Header */
-        .riley-chat-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-            color: white;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .riley-header-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .riley-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .riley-header-text h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .riley-header-text p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .riley-close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-
-        .riley-close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Contact Form */
-        .riley-contact-form {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .riley-form-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 8px;
-        }
-
-        .riley-form-subtitle {
-            font-size: 14px;
-            color: #6B7280;
-            margin-bottom: 8px;
-        }
-
-        .riley-form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .riley-form-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .riley-form-label.optional {
-            color: #6B7280;
-            font-weight: 400;
-        }
-
-        .riley-form-input {
-            padding: 12px 16px;
-            border: 2px solid #E5E7EB;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-            font-family: inherit;
-        }
-
-        .riley-form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .riley-start-chat-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 8px;
-        }
-
-        .riley-start-chat-btn:hover {
-            background: var(--primary-hover);
-        }
-
-        .riley-start-chat-btn:disabled {
-            background: #D1D5DB;
-            cursor: not-allowed;
-        }
-
-        /* Chat Messages */
-        .riley-chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            background: #F9FAFB;
-        }
-
-        .riley-message {
-            display: flex;
-            gap: 10px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .riley-message.user {
-            flex-direction: row-reverse;
+        .outer-wrapper {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
         }
 
-        .riley-message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            flex-shrink: 0;
+        .wrapper {
+            background: #ffffff;
+        }
+
+        header {
+            background: linear-gradient(135deg, #9ACD32, #F26924);
+            color: white;
+            padding: 20px;
+        }
+
+        header h1 {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 16px;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
         }
 
-        .riley-message.assistant .riley-message-avatar {
-            background: var(--primary-color);
-            color: white;
+        .riley-chat-icon-small {
+            width: 32px;
+            height: 32px;
         }
 
-        .riley-message.user .riley-message-avatar {
-            background: #E5E7EB;
-            color: var(--text-color);
+        .riley-chat-icon-small svg {
+            width: 100%;
+            height: 100%;
         }
 
-        .riley-message-content {
-            max-width: 70%;
+        section {
+            padding: 24px;
+            display: none;
+        }
+
+        section.visible {
+            display: block;
+        }
+
+        ol {
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        li.visible {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        li span {
+            background: #f3f4f6;
             padding: 12px 16px;
             border-radius: 12px;
+            flex: 1;
             font-size: 14px;
             line-height: 1.5;
         }
 
-        .riley-message.assistant .riley-message-content {
-            background: white;
-            color: var(--text-color);
-            border: 1px solid #E5E7EB;
+        #message-content {
+            display: block !important;
+            flex-direction: column;
+            gap: 0;
         }
 
-        .riley-message.user .riley-message-content {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .riley-message-time {
-            font-size: 11px;
-            color: #9CA3AF;
-            margin-top: 4px;
-            padding: 0 16px;
-        }
-
-        /* Appointment Status Banner */
-        .riley-appointment-banner {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-            color: white;
-            padding: 16px 20px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .riley-appointment-banner.show {
-            display: flex;
-        }
-
-        .riley-appointment-icon {
-            font-size: 24px;
-        }
-
-        .riley-appointment-text {
-            flex: 1;
-        }
-
-        .riley-appointment-text h4 {
-            margin: 0;
-            font-size: 14px;
+        label {
+            display: block;
             font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 6px;
+            margin-top: 12px;
+            color: #374151;
         }
 
-        .riley-appointment-text p {
-            margin: 4px 0 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        /* Typing Indicator */
-        .riley-typing {
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .riley-typing.show {
-            display: flex;
-        }
-
-        .riley-typing-dots {
-            display: flex;
-            gap: 4px;
-            padding: 12px 16px;
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #E5E7EB;
-        }
-
-        .riley-typing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #9CA3AF;
-            animation: typing 1.4s infinite;
-        }
-
-        .riley-typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .riley-typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
-
-        /* Chat Input */
-        .riley-chat-input-container {
-            padding: 16px 20px;
-            border-top: 1px solid #E5E7EB;
-            background: white;
-        }
-
-        .riley-chat-input-wrapper {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-        }
-
-        .riley-chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #E5E7EB;
-            border-radius: 24px;
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
             font-size: 14px;
-            resize: none;
-            max-height: 120px;
             font-family: inherit;
             transition: border-color 0.2s;
         }
 
-        .riley-chat-input:focus {
+        input[type="text"]:focus, textarea:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: #9ACD32;
         }
 
-        .riley-send-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            border: none;
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        section > p {
+            font-size: 11px;
+            color: #6b7280;
+            line-height: 1.5;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .desktop-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .desktop-buttons a {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .desktop-buttons a:hover {
+            color: #374151;
+        }
+
+        #text-me {
+            background: linear-gradient(135deg, #9ACD32, #F26924);
             color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #text-me:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(154, 205, 50, 0.4);
+        }
+
+        #text-me:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #close-riley-desktop-chat-box {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        #close-riley-desktop-chat-box:hover {
+            opacity: 1;
+        }
+
+        #close-riley-desktop-chat-box svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Follow-up Section */
+        #follow-up {
+            text-align: center;
+        }
+
+        .follow-up-wrapper {
+            padding: 20px 0;
+        }
+
+        .follow-up-wrapper svg {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .follow-up-wrapper h2 {
+            font-size: 20px;
+            color: #10b981;
+            margin-bottom: 24px;
+        }
+
+        #follow-up-message {
+            justify-content: center;
+        }
+
+        /* Avatar Upload */
+        .avatar-upload-section {
+            margin: 16px 0;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 2px dashed #d1d5db;
+        }
+
+        .avatar-upload-label {
+            display: block;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            background: #e5e7eb;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
-            flex-shrink: 0;
+            font-size: 32px;
+            object-fit: cover;
         }
 
-        .riley-send-btn:hover {
-            background: var(--primary-hover);
+        #avatar-upload {
+            display: none;
         }
 
-        .riley-send-btn:disabled {
-            background: #D1D5DB;
-            cursor: not-allowed;
-        }
-
-        /* Powered by */
-        .riley-powered-by {
-            text-align: center;
-            padding: 8px;
-            font-size: 11px;
-            color: #9CA3AF;
-            background: #F9FAFB;
-        }
-
-        /* Mobile Responsive */
         @media (max-width: 480px) {
-            #riley-chat-widget {
+            #riley-desktop-chat-box {
+                width: calc(100vw - 40px);
                 bottom: 10px;
                 right: 10px;
             }
 
-            .riley-chat-window {
-                width: calc(100vw - 20px);
-                height: calc(100vh - 100px);
-                bottom: 70px;
+            #riley-chat-trigger {
+                bottom: 10px;
+                right: 10px;
             }
-        }
-
-        /* Scrollbar */
-        .riley-chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .riley-chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .riley-chat-messages::-webkit-scrollbar-thumb {
-            background: #D1D5DB;
-            border-radius: 3px;
-        }
-
-        .riley-chat-messages::-webkit-scrollbar-thumb:hover {
-            background: #9CA3AF;
         }
     </style>
 </head>
 <body>
-    <!-- This file is the actual widget that gets embedded -->
-    <div id="riley-chat-widget">
-        <!-- Chat Button -->
-        <button class="riley-chat-button" id="rileyToggleBtn">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+    <!-- Floating Button -->
+    <button id="riley-chat-trigger">
+        <div class="chat-icon">
+            <svg viewBox="0 0 31 30" xmlns="http://www.w3.org/2000/svg">
+                <path d="M.695 28.617a.324.324 0 0 0 .126.58c.978.128 2.652.16 4.23-.773A12.018 12.018 0 0 0 11.049 30c6.093 0 11.049-4.405 11.049-9.871 0-5.467-4.956-9.872-11.05-9.872C4.957 10.257 0 14.662 0 20.13c0 2.347.915 4.501 2.462 6.205-.315.772-.82 1.64-1.767 2.283zm14.3-9.71c.663 0 1.2.546 1.2 1.222a1.21 1.21 0 0 1-1.2 1.221 1.21 1.21 0 0 1-1.2-1.221 1.21 1.21 0 0 1 1.2-1.222zm-3.978 0c.663 0 1.2.546 1.2 1.222a1.21 1.21 0 0 1-1.2 1.221c-.663 0-1.168-.578-1.168-1.221 0-.643.537-1.222 1.168-1.222zm-3.946 0c.663 0 1.2.546 1.2 1.222a1.21 1.21 0 0 1-1.2 1.221 1.21 1.21 0 0 1-1.2-1.221 1.21 1.21 0 0 1 1.2-1.222z" fill="#FFF" fill-rule="nonzero" opacity="1"></path>
             </svg>
-            <div class="riley-unread-badge" id="rileyBadge">1</div>
-        </button>
+        </div>
+        <span>Let's Chat!</span>
+    </button>
 
-        <!-- Chat Window -->
-        <div class="riley-chat-window" id="rileyChatWindow">
-            <!-- Header -->
-            <div class="riley-chat-header">
-                <div class="riley-header-info">
-                    <div class="riley-avatar">🐼</div>
-                    <div class="riley-header-text">
-                        <h3>Riley</h3>
-                        <p>Your roofing assistant</p>
+    <!-- Chat Box -->
+    <div id="riley-desktop-chat-box">
+        <div class="outer-wrapper">
+            <div class="wrapper">
+                <header>
+                    <h1>
+                        <div class="riley-chat-icon-small">
+                            <svg viewBox="0 0 31 30" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M.695 28.617a.324.324 0 0 0 .126.58c.978.128 2.652.16 4.23-.773A12.018 12.018 0 0 0 11.049 30c6.093 0 11.049-4.405 11.049-9.871 0-5.467-4.956-9.872-11.05-9.872C4.957 10.257 0 14.662 0 20.13c0 2.347.915 4.501 2.462 6.205-.315.772-.82 1.64-1.767 2.283zm14.3-9.71c.663 0 1.2.546 1.2 1.222a1.21 1.21 0 0 1-1.2 1.221 1.21 1.21 0 0 1-1.2-1.221 1.21 1.21 0 0 1 1.2-1.222zm-3.978 0c.663 0 1.2.546 1.2 1.222a1.21 1.21 0 0 1-1.2 1.221c-.663 0-1.168-.578-1.168-1.221 0-.643.537-1.222 1.168-1.222zm-3.946 0c.663 0 1.2.546 1.2 1.222a1.21 1.21 0 0 1-1.2 1.221 1.21 1.21 0 0 1-1.2-1.221 1.21 1.21 0 0 1 1.2-1.222z" fill="#FFF" fill-rule="nonzero" opacity="1"></path>
+                            </svg>
+                        </div>
+                        <span>Let's Chat!</span>
+                    </h1>
+                </header>
+
+                <section id="message-us" class="visible">
+                    <ol>
+                        <li class="visible">
+                            <img class="profile-icon" src="https://riley-dashboard-1754514173.s3.amazonaws.com/assets/panda-logo.png" alt="Panda Exteriors" id="avatar-display">
+                            <span>Would you like to chat with our team?</span>
+                        </li>
+
+                        <!-- Avatar Upload Option -->
+                        <li id="avatar-upload-section" style="display: none;">
+                            <div class="avatar-upload-section">
+                                <label for="avatar-upload" class="avatar-upload-label">
+                                    <img class="avatar-preview" id="avatar-preview" src="https://riley-dashboard-1754514173.s3.amazonaws.com/assets/panda-logo.png" alt="Panda Exteriors">
+                                    <div>📷 Click to upload your avatar</div>
+                                </label>
+                                <input type="file" id="avatar-upload" accept="image/*">
+                            </div>
+                        </li>
+
+                        <li id="message-content" class="visible">
+                            <label for="telephone">Your Mobile</label>
+                            <input type="text" name="telephone" id="telephone" placeholder="(123) 456-7890">
+
+                            <label for="message">Message</label>
+                            <textarea name="message" id="message" placeholder="your message"></textarea>
+                        </li>
+                    </ol>
+                    <p>By submitting you agree to receive text messages at the number provided. Message/data rates apply.</p>
+                    <div class="desktop-buttons">
+                        <a href="https://www.pandaexteriors.com" target="_blank">
+                            Powered by <strong>Panda Exteriors</strong>
+                        </a>
+                        <button id="text-me">Text Me</button>
                     </div>
-                </div>
-                <button class="riley-close-btn" id="rileyCloseBtn">&times;</button>
+                </section>
+
+                <section id="follow-up">
+                    <div class="follow-up-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 253"><defs><linearGradient id="a" x1="50.459%" x2="50.459%" y1="63.093%" y2="37.093%"><stop offset="0%" stop-color="gray" stop-opacity=".25"></stop><stop offset="54%" stop-color="gray" stop-opacity=".12"></stop><stop offset="100%" stop-color="gray" stop-opacity=".1"></stop></linearGradient></defs><g fill="none" fill-rule="evenodd"><ellipse cx="151.005" cy="139.213" fill="#FFF" rx="16.86" ry="16.868"></ellipse><path fill="#3ACC6C" fill-rule="nonzero" d="M173.157 136.99c0 9.118-5.49 17.339-13.91 20.828a22.526 22.526 0 0 1-24.558-4.887 22.552 22.552 0 0 1-4.885-24.568 22.534 22.534 0 0 1 20.819-13.917c12.445 0 22.534 10.093 22.534 22.544zm-25.138 11.934l16.715-16.723a1.453 1.453 0 0 0 0-2.058l-2.056-2.043a1.449 1.449 0 0 0-2.054 0l-13.634 13.64-6.365-6.383a1.458 1.458 0 0 0-2.057 0l-2.057 2.07a1.46 1.46 0 0 0 0 2.057l9.451 9.452a1.452 1.452 0 0 0 2.057 0v-.012z"></path></g></svg>
+                        <h2>We've received your message!</h2>
+                        <ol>
+                            <li id="follow-up-message" class="visible">
+                                <img class="profile-icon" src="https://riley-dashboard-1754514173.s3.amazonaws.com/assets/panda-logo.png" alt="Panda Exteriors">
+                                <span>We'll send a reply to your mobile number.</span>
+                            </li>
+                        </ol>
+                    </div>
+                </section>
             </div>
-
-            <!-- Appointment Banner -->
-            <div class="riley-appointment-banner" id="rileyAppointmentBanner">
-                <div class="riley-appointment-icon">📅</div>
-                <div class="riley-appointment-text">
-                    <h4>Appointment Requested!</h4>
-                    <p>We'll confirm your appointment shortly</p>
-                </div>
-            </div>
-
-            <!-- Contact Form (shown first) -->
-            <div class="riley-contact-form" id="rileyContactForm">
-                <div class="riley-form-title">👋 Let's get started!</div>
-                <div class="riley-form-subtitle">We'll help you with your roofing needs</div>
-
-                <div class="riley-form-group">
-                    <label class="riley-form-label">Your Name *</label>
-                    <input type="text" class="riley-form-input" id="rileyName" placeholder="John Doe" required>
-                </div>
-
-                <div class="riley-form-group">
-                    <label class="riley-form-label">Phone Number *</label>
-                    <input type="tel" class="riley-form-input" id="rileyPhone" placeholder="(555) 123-4567" required>
-                </div>
-
-                <div class="riley-form-group">
-                    <label class="riley-form-label optional">Email (Optional)</label>
-                    <input type="email" class="riley-form-input" id="rileyEmail" placeholder="john@example.com">
-                </div>
-
-                <button class="riley-start-chat-btn" id="rileyStartBtn">Start Chat</button>
-            </div>
-
-            <!-- Chat Messages -->
-            <div class="riley-chat-messages" id="rileyChatMessages" style="display: none;">
-                <!-- Messages will be added here -->
-            </div>
-
-            <!-- Typing Indicator -->
-            <div class="riley-typing" id="rileyTyping">
-                <div class="riley-message-avatar" style="background: var(--primary-color); color: white;">🐼</div>
-                <div class="riley-typing-dots">
-                    <div class="riley-typing-dot"></div>
-                    <div class="riley-typing-dot"></div>
-                    <div class="riley-typing-dot"></div>
-                </div>
-            </div>
-
-            <!-- Chat Input -->
-            <div class="riley-chat-input-container" id="rileyChatInputContainer" style="display: none;">
-                <div class="riley-chat-input-wrapper">
-                    <textarea class="riley-chat-input" id="rileyChatInput" placeholder="Type your message..." rows="1"></textarea>
-                    <button class="riley-send-btn" id="rileySendBtn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Powered By -->
-            <div class="riley-powered-by">
-                Powered by Riley AI
-            </div>
+            <button id="close-riley-desktop-chat-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58">
+                    <g fill="none" fill-rule="nonzero">
+                        <circle cx="29" cy="29" r="29" fill="#000000" opacity="0.5"></circle>
+                        <path stroke="#FFF" stroke-linecap="square" stroke-width="3.2" d="M21.32 21.32L37 37M36.68 21.32L21 37"></path>
+                    </g>
+                </svg>
+            </button>
         </div>
     </div>
 
     <script>
-        (function() {
-            // Configuration
-            const API_URL = 'https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod';
-            let conversationId = null;
-            let contactInfo = {};
-            let hasAppointment = false;
+        // Configuration (can be overridden by parent page)
+        const config = window.RileyWidgetConfig || {
+            apiUrl: 'https://jtpw1iado5.execute-api.us-east-2.amazonaws.com/prod',
+            companyName: 'Panda Exteriors',
+            avatarUrl: null,
+            primaryColor: '#9ACD32'
+        };
 
-            // Elements
-            const toggleBtn = document.getElementById('rileyToggleBtn');
-            const closeBtn = document.getElementById('rileyCloseBtn');
-            const chatWindow = document.getElementById('rileyChatWindow');
-            const contactForm = document.getElementById('rileyContactForm');
-            const startBtn = document.getElementById('rileyStartBtn');
-            const messagesContainer = document.getElementById('rileyChatMessages');
-            const inputContainer = document.getElementById('rileyChatInputContainer');
-            const chatInput = document.getElementById('rileyChatInput');
-            const sendBtn = document.getElementById('rileySendBtn');
-            const typingIndicator = document.getElementById('rileyTyping');
-            const appointmentBanner = document.getElementById('rileyAppointmentBanner');
-            const badge = document.getElementById('rileyBadge');
+        // Elements
+        const trigger = document.getElementById('riley-chat-trigger');
+        const chatBox = document.getElementById('riley-desktop-chat-box');
+        const closeBtn = document.getElementById('close-riley-desktop-chat-box');
+        const textMeBtn = document.getElementById('text-me');
+        const avatarUpload = document.getElementById('avatar-upload');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarDisplay = document.getElementById('avatar-display');
+        const messageSection = document.getElementById('message-us');
+        const followUpSection = document.getElementById('follow-up');
+        let uploadedAvatar = null;
 
-            // Toggle chat window
-            toggleBtn.addEventListener('click', () => {
-                chatWindow.classList.toggle('show');
-                badge.classList.remove('show');
+        // Set avatar if provided in config
+        if (config.avatarUrl) {
+            avatarPreview.src = config.avatarUrl;
+            avatarDisplay.src = config.avatarUrl;
+            document.querySelectorAll('.profile-icon').forEach(img => {
+                img.src = config.avatarUrl;
             });
+        }
 
-            closeBtn.addEventListener('click', () => {
-                chatWindow.classList.remove('show');
-            });
+        // Toggle chat box
+        trigger.addEventListener('click', () => {
+            chatBox.classList.add('visible');
+            trigger.style.display = 'none';
+        });
 
-            // Start chat
-            startBtn.addEventListener('click', async () => {
-                const name = document.getElementById('rileyName').value.trim();
-                const phone = document.getElementById('rileyPhone').value.trim();
-                const email = document.getElementById('rileyEmail').value.trim();
+        closeBtn.addEventListener('click', () => {
+            chatBox.classList.remove('visible');
+            trigger.style.display = 'flex';
+        });
 
-                if (!name || !phone) {
-                    alert('Please enter your name and phone number');
-                    return;
-                }
-
-                contactInfo = { name, phone, email };
-
-                // Hide form, show chat
-                contactForm.style.display = 'none';
-                messagesContainer.style.display = 'flex';
-                inputContainer.style.display = 'block';
-
-                // Create contact in CRM
-                await createContact(name, phone, email);
-
-                // Send initial greeting
-                addMessage('assistant', `Hi ${name.split(' ')[0]}! 👋 I'm Riley from Panda Exteriors. How can I help you with your roofing needs today?`);
-
-                chatInput.focus();
-            });
-
-            // Send message
-            sendBtn.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            // Auto-resize textarea
-            chatInput.addEventListener('input', () => {
-                chatInput.style.height = 'auto';
-                chatInput.style.height = chatInput.scrollHeight + 'px';
-            });
-
-            async function sendMessage() {
-                const message = chatInput.value.trim();
-                if (!message) return;
-
-                // Add user message
-                addMessage('user', message);
-                chatInput.value = '';
-                chatInput.style.height = 'auto';
-
-                // Show typing indicator
-                typingIndicator.classList.add('show');
-
-                try {
-                    // Send to API
-                    const response = await fetch(`${API_URL}/riley`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            message,
-                            phoneNumber: contactInfo.phone,
-                            email: contactInfo.email,
-                            conversationId,
-                            channel: 'web',
-                            metadata: {
-                                name: contactInfo.name,
-                                source: 'website-widget'
-                            }
-                        })
-                    });
-
-                    const data = await response.json();
-                    conversationId = data.conversationId;
-
-                    // Hide typing indicator
-                    typingIndicator.classList.remove('show');
-
-                    // Add Riley's response
-                    addMessage('assistant', data.response);
-
-                    // Check for appointment intent
-                    if (data.intent && (data.intent.intent === 'booking' || data.intent.intent === 'appointment')) {
-                        setAppointmentStatus(true);
-                    }
-
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                    typingIndicator.classList.remove('show');
-                    addMessage('assistant', "Sorry, I'm having trouble right now. Please try again in a moment.");
-                }
+        // Avatar upload
+        avatarUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    avatarPreview.src = event.target.result;
+                    avatarDisplay.src = event.target.result;
+                    uploadedAvatar = file;
+                };
+                reader.readAsDataURL(file);
             }
+        });
 
-            function addMessage(role, content) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `riley-message ${role}`;
-
-                const avatar = document.createElement('div');
-                avatar.className = 'riley-message-avatar';
-                avatar.textContent = role === 'assistant' ? '🐼' : contactInfo.name.charAt(0).toUpperCase();
-
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'riley-message-content';
-                contentDiv.textContent = content;
-
-                if (role === 'user') {
-                    messageDiv.appendChild(contentDiv);
-                    messageDiv.appendChild(avatar);
+        // Phone number formatting
+        const phoneInput = document.getElementById('telephone');
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = `(${value}`;
+                } else if (value.length <= 6) {
+                    value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
                 } else {
-                    messageDiv.appendChild(avatar);
-                    messageDiv.appendChild(contentDiv);
-                }
-
-                messagesContainer.appendChild(messageDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-
-            async function createContact(name, phone, email) {
-                try {
-                    await fetch(`${API_URL}/contacts`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            firstName: name.split(' ')[0],
-                            lastName: name.split(' ').slice(1).join(' '),
-                            phoneNumber: phone,
-                            email: email,
-                            leadStatus: 'new',
-                            source: 'website-widget',
-                            tags: ['web-chat', 'roofing-inquiry']
-                        })
-                    });
-                } catch (error) {
-                    console.error('Error creating contact:', error);
+                    value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
                 }
             }
+            e.target.value = value;
+        });
 
-            function setAppointmentStatus(status) {
-                hasAppointment = status;
-                if (status) {
-                    appointmentBanner.classList.add('show');
-                    // Update contact status to "engaged"
-                    updateContactStatus('engaged');
-                }
+        // Submit message
+        textMeBtn.addEventListener('click', async () => {
+            const phone = document.getElementById('telephone').value;
+            const message = document.getElementById('message').value;
+
+            if (!phone || !message) {
+                alert('Please enter your phone number and message.');
+                return;
             }
 
-            async function updateContactStatus(status) {
-                try {
-                    // Find contact by phone and update status
-                    const contacts = await fetch(`${API_URL}/contacts?phoneNumber=${contactInfo.phone}`).then(r => r.json());
-                    if (contacts.contacts && contacts.contacts[0]) {
-                        await fetch(`${API_URL}/contacts`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contactId: contacts.contacts[0].contactId,
-                                leadStatus: status
-                            })
-                        });
+            // Disable button
+            textMeBtn.disabled = true;
+            textMeBtn.textContent = 'Sending...';
+
+            try {
+                // Clean phone number
+                const cleanPhone = phone.replace(/\D/g, '');
+
+                // Prepare form data
+                const formData = {
+                    phoneNumber: cleanPhone,
+                    message: message,
+                    channel: 'web',
+                    metadata: {
+                        source: 'website-widget',
+                        userAgent: navigator.userAgent
                     }
-                } catch (error) {
-                    console.error('Error updating contact status:', error);
-                }
-            }
+                };
 
-            // Show unread badge initially
-            setTimeout(() => {
-                badge.classList.add('show');
-            }, 2000);
-        })();
+                // Send to API
+                const response = await fetch(`${config.apiUrl}/riley`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Show success
+                    messageSection.classList.remove('visible');
+                    followUpSection.classList.add('visible');
+
+                    // Reset form after delay
+                    setTimeout(() => {
+                        document.getElementById('telephone').value = '';
+                        document.getElementById('message').value = '';
+                        messageSection.classList.add('visible');
+                        followUpSection.classList.remove('visible');
+                        textMeBtn.disabled = false;
+                        textMeBtn.textContent = 'Text Me';
+
+                        // Auto-close after success
+                        setTimeout(() => {
+                            chatBox.classList.remove('visible');
+                            trigger.style.display = 'flex';
+                        }, 3000);
+                    }, 5000);
+                } else {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Sorry, there was an error sending your message. Please try again.');
+                textMeBtn.disabled = false;
+                textMeBtn.textContent = 'Text Me';
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatBox.classList.contains('visible')) {
+                chatBox.classList.remove('visible');
+                trigger.style.display = 'flex';
+            }
+        });
     </script>
 </body>
 </html>
