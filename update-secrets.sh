@@ -4,19 +4,16 @@
 
 echo "Updating AWS Secrets Manager with new API keys..."
 
-# Create OpenAI secret
+# Create OpenAI secret (placeholder - needs actual API key)
 aws secretsmanager create-secret \
     --name OpenAICredentials \
     --description "OpenAI API credentials for Riley Chat" \
-    --secret-string '{"apiKey":"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"}' \
+    --secret-string '{"apiKey":"YOUR_OPENAI_API_KEY"}' \
     --region us-east-1 \
     2>/dev/null || \
-aws secretsmanager update-secret \
-    --secret-id OpenAICredentials \
-    --secret-string '{"apiKey":"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"}' \
-    --region us-east-1
+echo "OpenAI secret already exists. Skipping creation."
 
-echo "✓ OpenAI credentials updated"
+echo "✓ OpenAI credentials placeholder created (update with actual key)"
 
 # Create PodOps credentials (placeholder - needs actual credentials)
 aws secretsmanager create-secret \
