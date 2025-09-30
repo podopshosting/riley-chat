@@ -2,6 +2,8 @@ const twilio = require('twilio');
 const dynamodb = require('/opt/nodejs/dynamodb-client');
 const secretsManager = require('/opt/nodejs/secrets-manager');
 const RileyAI = require('/opt/nodejs/riley-ai');
+const businessHoursHelper = require('/opt/nodejs/business-hours-helper');
+const openaiClient = require('/opt/nodejs/openai-client');
 
 exports.handler = async (event) => {
     console.log('Riley Twilio Lambda triggered:', JSON.stringify(event));
@@ -49,13 +51,47 @@ exports.handler = async (event) => {
             messageSid
         });
 
-        // Generate Riley's response
-        const rileyAI = new RileyAI();
-        const response = await rileyAI.generateResponse(body, from, {
-            conversationHistory: conversation.messages,
-            metadata: conversation.metadata,
-            channel: 'sms'
-        });
+        // Check if outside business hours
+        const shouldSendAfterHours = await businessHoursHelper.shouldSendAfterHoursMessage();
+        let response;
+
+        if (shouldSendAfterHours && conversation.messages.length <= 1) {
+            // Send after-hours message (only for first message)
+            response = businessHoursHelper.getAfterHoursMessage();
+            console.log('Sending after-hours message:', response);
+        } else {
+            // Generate Riley's response with ChatGPT if available, otherwise RileyAI
+            try {
+                const intentAnalysis = await openaiClient.analyzeIntent(body);
+                const settings = await dynamodb.getSettings();
+                const context = {
+                    companyName: settings?.company?.name || 'Panda Exteriors',
+                    personality: settings?.settings?.personality || 'Professional and friendly',
+                    companyDetails: settings?.company || {},
+                    negativeFilters: settings?.negative || [],
+                    threadHistory: conversation.messages.slice(-5)
+                };
+
+                response = await openaiClient.generateResponse(body, context);
+
+                // Check for appointment booking
+                if (intentAnalysis?.intent === 'booking' || intentAnalysis?.intent === 'appointment') {
+                    await dynamodb.updateConversation(conversation.conversationId, {
+                        appointmentRequested: true,
+                        appointmentStatus: 'pending_confirmation',
+                        leadStatus: 'engaged'
+                    });
+                }
+            } catch (error) {
+                console.log('ChatGPT unavailable, using RileyAI:', error.message);
+                const rileyAI = new RileyAI();
+                response = await rileyAI.generateResponse(body, from, {
+                    conversationHistory: conversation.messages,
+                    metadata: conversation.metadata,
+                    channel: 'sms'
+                });
+            }
+        }
 
         // Add Riley's response to conversation
         await dynamodb.addMessage(conversation.conversationId, {

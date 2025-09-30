@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Hours Configuration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4F46E5;
+            --success: #10B981;
+            --danger: #EF4444;
+            --bg: #FFFFFF;
+            --bg-secondary: #F3F4F6;
+            --text: #111827;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hours-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .day-row {
+            display: grid;
+            grid-template-columns: 120px 80px 1fr 1fr 50px;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .day-row.closed {
+            opacity: 0.6;
+        }
+
+        .day-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #D1D5DB;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: var(--success);
+        }
+
+        .toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .time-input {
+            padding: 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .time-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .time-input:disabled {
+            background: #F3F4F6;
+            cursor: not-allowed;
+        }
+
+        .closed-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .open-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-group:hover {
+            background: #E5E7EB;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338CA;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .preview-box {
+            background: #EFF6FF;
+            border: 2px solid #BFDBFE;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .preview-box h3 {
+            color: #1E40AF;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .preview-message {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #BFDBFE;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .variables-hint {
+            background: #FEF3C7;
+            border: 1px solid #FCD34D;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #92400E;
+        }
+
+        .variables-hint strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .current-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-dot.open {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.closed {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .timezone-select {
+            padding: 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            width: 100%;
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .day-row {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .day-name {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>🕐 Business Hours Configuration</h1>
+                    <p>Set your operating hours and after-hours messaging</p>
+                </div>
+                <div class="current-status" id="currentStatus">
+                    <span class="status-dot open" id="statusDot"></span>
+                    <span id="statusText">Currently Open</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Business Hours -->
+        <div class="card">
+            <h2>📅 Weekly Schedule</h2>
+
+            <div class="form-group">
+                <label class="form-label">Timezone</label>
+                <select class="timezone-select" id="timezone">
+                    <option value="America/New_York">Eastern Time (ET)</option>
+                    <option value="America/Chicago">Central Time (CT)</option>
+                    <option value="America/Denver">Mountain Time (MT)</option>
+                    <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                    <option value="America/Phoenix">Arizona Time (MST)</option>
+                    <option value="America/Anchorage">Alaska Time (AKST)</option>
+                    <option value="Pacific/Honolulu">Hawaii Time (HST)</option>
+                </select>
+            </div>
+
+            <div class="hours-grid" id="hoursGrid">
+                <!-- Days will be generated here -->
+            </div>
+        </div>
+
+        <!-- After Hours Response -->
+        <div class="card">
+            <h2>🌙 After Hours Response</h2>
+
+            <div class="checkbox-group" onclick="toggleAfterHours()">
+                <input type="checkbox" id="afterHoursEnabled" checked>
+                <label style="cursor: pointer; flex: 1;">
+                    <strong>Send automatic after-hours SMS response</strong>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+                        Customers will receive an automated message when contacting outside business hours
+                    </p>
+                </label>
+            </div>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label class="form-label">After Hours Message</label>
+                <textarea class="form-textarea" id="afterHoursMessage" placeholder="Enter your after-hours message...">Thanks for reaching out! We are currently closed, but we wanted to confirm we received your message. We'll get back to you as soon as possible after we open at [[Next Open Time]].</textarea>
+
+                <div class="variables-hint">
+                    <strong>Available Variables:</strong>
+                    <code>[[Next Open Time]]</code> - Automatically replaced with next opening time<br>
+                    <code>[[Company Name]]</code> - Your company name<br>
+                    <code>[[Customer Name]]</code> - Customer's name (if available)
+                </div>
+            </div>
+
+            <div class="preview-box">
+                <h3>📱 Preview</h3>
+                <div class="preview-message" id="messagePreview">
+                    Thanks for reaching out! We are currently closed, but we wanted to confirm we received your message. We'll get back to you as soon as possible after we open at Monday 8:00 AM.
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+            <button class="btn btn-primary" onclick="saveConfiguration()" style="min-width: 200px;">
+                💾 Save Business Hours
+            </button>
+        </div>
+    </div>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">
+        ✅ Settings saved successfully!
+    </div>
+
+    <script>
+        const API_URL = 'https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod';
+
+        const days = [
+            { name: 'Sunday', defaultOpen: false },
+            { name: 'Monday', defaultOpen: true },
+            { name: 'Tuesday', defaultOpen: true },
+            { name: 'Wednesday', defaultOpen: true },
+            { name: 'Thursday', defaultOpen: true },
+            { name: 'Friday', defaultOpen: true },
+            { name: 'Saturday', defaultOpen: true }
+        ];
+
+        let businessHours = {};
+
+        // Initialize
+        function init() {
+            loadBusinessHours();
+            renderDays();
+            updateCurrentStatus();
+
+            // Update status every minute
+            setInterval(updateCurrentStatus, 60000);
+
+            // Update preview when message changes
+            document.getElementById('afterHoursMessage').addEventListener('input', updatePreview);
+        }
+
+        // Load business hours from API or localStorage
+        async function loadBusinessHours() {
+            try {
+                const response = await fetch(`${API_URL}/settings`);
+                const data = await response.json();
+
+                if (data.businessHours) {
+                    businessHours = data.businessHours;
+                } else {
+                    // Set defaults
+                    days.forEach(day => {
+                        businessHours[day.name.toLowerCase()] = {
+                            open: day.defaultOpen,
+                            openTime: '08:00',
+                            closeTime: '18:00'
+                        };
+                    });
+                }
+
+                if (data.afterHoursMessage) {
+                    document.getElementById('afterHoursMessage').value = data.afterHoursMessage;
+                    document.getElementById('afterHoursEnabled').checked = data.afterHoursEnabled !== false;
+                }
+
+                if (data.timezone) {
+                    document.getElementById('timezone').value = data.timezone;
+                }
+
+                renderDays();
+                updatePreview();
+            } catch (error) {
+                console.error('Error loading business hours:', error);
+                // Use defaults
+                days.forEach(day => {
+                    businessHours[day.name.toLowerCase()] = {
+                        open: day.defaultOpen,
+                        openTime: '08:00',
+                        closeTime: '18:00'
+                    };
+                });
+                renderDays();
+            }
+        }
+
+        // Render day rows
+        function renderDays() {
+            const grid = document.getElementById('hoursGrid');
+            grid.innerHTML = days.map(day => {
+                const dayKey = day.name.toLowerCase();
+                const dayData = businessHours[dayKey] || { open: day.defaultOpen, openTime: '08:00', closeTime: '18:00' };
+
+                return `
+                    <div class="day-row ${!dayData.open ? 'closed' : ''}" id="row-${dayKey}">
+                        <div class="day-name">${day.name}</div>
+                        <div class="toggle">
+                            <div class="toggle-switch ${dayData.open ? 'active' : ''}" id="toggle-${dayKey}" onclick="toggleDay('${dayKey}')">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <input type="time" class="time-input" id="open-${dayKey}" value="${dayData.openTime}" ${!dayData.open ? 'disabled' : ''} onchange="updateTime('${dayKey}', 'open', this.value)">
+                        <input type="time" class="time-input" id="close-${dayKey}" value="${dayData.closeTime}" ${!dayData.open ? 'disabled' : ''} onchange="updateTime('${dayKey}', 'close', this.value)">
+                        <div>
+                            ${dayData.open ? '<span class="open-badge">Open</span>' : '<span class="closed-badge">Closed</span>'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Toggle day open/closed
+        function toggleDay(dayKey) {
+            businessHours[dayKey].open = !businessHours[dayKey].open;
+            renderDays();
+            updateCurrentStatus();
+        }
+
+        // Update time
+        function updateTime(dayKey, type, value) {
+            if (type === 'open') {
+                businessHours[dayKey].openTime = value;
+            } else {
+                businessHours[dayKey].closeTime = value;
+            }
+            updateCurrentStatus();
+            updatePreview();
+        }
+
+        // Toggle after hours
+        function toggleAfterHours() {
+            const checkbox = document.getElementById('afterHoursEnabled');
+            checkbox.checked = !checkbox.checked;
+        }
+
+        // Update current status
+        function updateCurrentStatus() {
+            const now = new Date();
+            const dayName = days[now.getDay()].name.toLowerCase();
+            const currentTime = now.toTimeString().slice(0, 5);
+
+            const todayHours = businessHours[dayName];
+            const isOpen = todayHours && todayHours.open &&
+                          currentTime >= todayHours.openTime &&
+                          currentTime < todayHours.closeTime;
+
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            if (isOpen) {
+                statusDot.className = 'status-dot open';
+                statusText.textContent = `Currently Open (closes at ${todayHours.closeTime})`;
+            } else {
+                statusDot.className = 'status-dot closed';
+                const nextOpen = getNextOpenTime();
+                statusText.textContent = `Currently Closed (${nextOpen})`;
+            }
+        }
+
+        // Get next open time
+        function getNextOpenTime() {
+            const now = new Date();
+            const currentDay = now.getDay();
+
+            // Check remaining days this week
+            for (let i = 0; i < 7; i++) {
+                const checkDay = (currentDay + i) % 7;
+                const dayName = days[checkDay].name.toLowerCase();
+                const dayHours = businessHours[dayName];
+
+                if (dayHours && dayHours.open) {
+                    if (i === 0) {
+                        const currentTime = now.toTimeString().slice(0, 5);
+                        if (currentTime < dayHours.openTime) {
+                            return `opens today at ${formatTime(dayHours.openTime)}`;
+                        }
+                    } else {
+                        return `opens ${days[checkDay].name} at ${formatTime(dayHours.openTime)}`;
+                    }
+                }
+            }
+
+            return 'opens soon';
+        }
+
+        // Format time to 12-hour
+        function formatTime(time24) {
+            const [hours, minutes] = time24.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+
+        // Update message preview
+        function updatePreview() {
+            const message = document.getElementById('afterHoursMessage').value;
+            const nextOpen = getNextOpenTime();
+            const preview = message
+                .replace('[[Next Open Time]]', nextOpen)
+                .replace('[[Company Name]]', 'Panda Exteriors')
+                .replace('[[Customer Name]]', 'John');
+
+            document.getElementById('messagePreview').textContent = preview;
+        }
+
+        // Save configuration
+        async function saveConfiguration() {
+            const config = {
+                businessHours: businessHours,
+                timezone: document.getElementById('timezone').value,
+                afterHoursEnabled: document.getElementById('afterHoursEnabled').checked,
+                afterHoursMessage: document.getElementById('afterHoursMessage').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                if (response.ok) {
+                    showSaveIndicator();
+                    updateCurrentStatus();
+                } else {
+                    alert('Error saving configuration');
+                }
+            } catch (error) {
+                console.error('Error saving:', error);
+                alert('Error saving configuration');
+            }
+        }
+
+        // Show save indicator
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

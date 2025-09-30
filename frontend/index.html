@@ -682,6 +682,9 @@
                     <button class="nav-tab" data-tab="webchat" onclick="switchTab('webchat')">
                         Web Chat
                     </button>
+                    <button class="nav-tab" data-tab="hours" onclick="switchTab('hours')">
+                        Hours
+                    </button>
                     <button class="nav-tab" data-tab="admin" id="adminTab" onclick="switchTab('admin')">
                         Admin
                     </button>
@@ -732,6 +735,11 @@
             <!-- Web Chat Tab -->
             <div class="tab-content" id="webchat-tab">
                 <iframe src="web-chat-embed.html" class="tab-frame" id="webchatFrame"></iframe>
+            </div>
+
+            <!-- Business Hours Tab -->
+            <div class="tab-content" id="hours-tab">
+                <iframe src="business-hours-config.html" class="tab-frame" id="hoursFrame"></iframe>
             </div>
 
             <!-- Admin Tab -->
