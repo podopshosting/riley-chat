@@ -1,10 +1,10 @@
 const mysql = require('mysql2/promise');
 
 const dbConfig = {
-    host: 'digitiv-staging.c9ac4atqx0kw.us-east-2.rds.amazonaws.com',
-    user: 'digitiv_staging',
-    password: 'Podopsmedia123!',
-    database: 'digitiv_staging'
+    host: process.env.DB_HOST || 'REDACTED',
+    user: process.env.DB_USER || 'REDACTED',
+    password: process.env.DB_PASSWORD || 'REDACTED_USE_SECRETS_MANAGER',
+    database: process.env.DB_NAME || 'REDACTED'
 };
 
 exports.handler = async (event) => {

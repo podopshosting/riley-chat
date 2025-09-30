@@ -958,12 +958,12 @@
             if (savedUsers) {
                 users = JSON.parse(savedUsers);
             } else {
-                // Initialize with default super admin
+                // Initialize with default admin (update credentials on first login)
                 users = {
-                    'robwinters@pandaexteriors.com': {
-                        name: 'Rob Winters',
-                        email: 'robwinters@pandaexteriors.com',
-                        password: 'TempPass123',
+                    'admin@example.com': {
+                        name: 'Admin User',
+                        email: 'admin@example.com',
+                        password: 'CHANGE_ME_ON_FIRST_LOGIN',
                         roles: ['Super Admin'],
                         permissions: ['conversations', 'analytics', 'lsa', 'admin'],
                         conversationCount: 0

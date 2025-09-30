@@ -48,9 +48,10 @@ else
 fi
 
 echo "🔐 Testing login functionality..."
+# Note: Replace TEST_EMAIL and TEST_PASSWORD with actual test credentials
 login_response=$(curl -s -X POST \
     -H "Content-Type: application/json" \
-    -d '{"email":"jillian_davis@dfci.harvard.edu","password":"Podopsmedia123!"}' \
+    -d '{"email":"TEST_EMAIL","password":"TEST_PASSWORD"}' \
     "https://jtpw1iado5.execute-api.us-east-2.amazonaws.com/prod/auth/login")
 
 if [[ $login_response == *"token"* ]]; then

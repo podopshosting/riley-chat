@@ -4,7 +4,7 @@
     "JWT_SECRET": "your-jwt-secret-key",
     "DB_HOST": "database-1.c59plypi1ccp.us-east-2.rds.amazonaws.com",
     "DB_USER": "root",
-    "DB_PASSWORD": "PTif+Tn3AlVbk[C-7eKg!'9arZ%D",
+    "DB_PASSWORD": "REDACTED_USE_SECRETS_MANAGER",
     "DB_NAME": "digitiv_staging"
   }
 }

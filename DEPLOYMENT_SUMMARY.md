@@ -39,10 +39,10 @@ LSA API: https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod/lsa
 
 ### Important Security Notes
 
-⚠️ **CRITICAL**: The Salesforce password was found in the secrets:
-- Username: robwinters@pandaexteriors.com
-- Password is now stored in Secrets Manager (not in code)
-- Please update the password in Salesforce immediately as it may have been exposed
+⚠️ **CRITICAL**: Salesforce credentials found in code have been removed:
+- All credentials are now stored in Secrets Manager (not in code)
+- Please update passwords in Salesforce immediately as they may have been exposed
+- Update the secrets in AWS Secrets Manager with new credentials
 
 ### Next Steps
 
@@ -74,7 +74,7 @@ To update the Salesforce credentials after changing the password:
 ```bash
 aws secretsmanager put-secret-value \
     --secret-id SalesForceCredentials \
-    --secret-string '{"username":"robwinters@pandaexteriors.com","password":"NEW_PASSWORD","securityToken":"NEW_TOKEN","loginUrl":"https://login.salesforce.com"}' \
+    --secret-string '{"username":"YOUR_USERNAME","password":"YOUR_PASSWORD","securityToken":"YOUR_TOKEN","loginUrl":"https://login.salesforce.com"}' \
     --region us-east-1
 ```
 
