@@ -219,6 +219,38 @@
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
+        .form-range {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-light-secondary);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        body.dark-mode .form-range {
+            background: var(--bg-dark);
+        }
+
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .form-range::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+        }
+
         /* Buttons */
         .btn {
             padding: 0.5rem 1rem;
@@ -602,15 +634,124 @@
 
         <!-- Tabs -->
         <div class="tabs-container">
-            <button class="tab-button active" onclick="switchTab('responses')">Response Templates</button>
+            <button class="tab-button active" onclick="switchTab('settings')">Riley Settings</button>
+            <button class="tab-button" onclick="switchTab('scripts')">Conversation Scripts</button>
+            <button class="tab-button" onclick="switchTab('responses')">Response Templates</button>
             <button class="tab-button" onclick="switchTab('personalities')">Bot Personalities</button>
             <button class="tab-button" onclick="switchTab('company')">Company Details</button>
             <button class="tab-button" onclick="switchTab('negative')">Negative Filters</button>
             <button class="tab-button" onclick="switchTab('threads')">Message Threads</button>
         </div>
 
+        <!-- Riley Settings Tab -->
+        <div class="tab-content active" id="settings-tab">
+            <div class="section">
+                <h2 class="section-title">Riley Default Settings</h2>
+                <p style="color: var(--text-light-secondary); margin-bottom: 1.5rem;">
+                    Configure Riley's default behavior, tone, and style. These settings will be used by ChatGPT to generate responses.
+                </p>
+
+                <div class="form-group">
+                    <label class="form-label">Default Tone</label>
+                    <select class="form-select" id="riley-tone">
+                        <option value="professional">Professional</option>
+                        <option value="friendly">Friendly</option>
+                        <option value="casual">Casual</option>
+                        <option value="formal">Formal</option>
+                        <option value="enthusiastic">Enthusiastic</option>
+                        <option value="empathetic">Empathetic</option>
+                    </select>
+                    <small style="color: var(--text-light-secondary);">How Riley should sound in conversations</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Default Style</label>
+                    <select class="form-select" id="riley-style">
+                        <option value="concise">Concise - Brief and to the point</option>
+                        <option value="detailed">Detailed - Thorough explanations</option>
+                        <option value="conversational">Conversational - Natural dialogue</option>
+                        <option value="technical">Technical - Expert terminology</option>
+                        <option value="simple">Simple - Easy to understand</option>
+                    </select>
+                    <small style="color: var(--text-light-secondary);">Communication style for responses</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Personality Description</label>
+                    <textarea class="form-textarea" id="riley-personality" rows="4" placeholder="Describe Riley's personality traits...">Riley is a helpful and knowledgeable assistant for Panda Exteriors. Riley is professional yet approachable, always eager to help customers with their exterior home improvement needs. Riley provides clear information and guides customers toward booking consultations.</textarea>
+                    <small style="color: var(--text-light-secondary);">This description helps ChatGPT understand Riley's character</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Response Guidelines</label>
+                    <textarea class="form-textarea" id="riley-guidelines" rows="6" placeholder="Add specific guidelines for Riley's responses...">1. Always be helpful and courteous
+2. Provide accurate information about services
+3. Guide customers toward scheduling consultations
+4. Ask clarifying questions when needed
+5. Be proactive in offering assistance
+6. Maintain professional boundaries</textarea>
+                    <small style="color: var(--text-light-secondary);">Specific rules Riley should follow</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Default Greeting</label>
+                    <input type="text" class="form-input" id="riley-greeting" value="Hi! I'm Riley from Panda Exteriors. How can I help you today?">
+                    <small style="color: var(--text-light-secondary);">First message sent to new conversations</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Response Temperature (Creativity)</label>
+                    <input type="range" min="0" max="1" step="0.1" value="0.7" id="riley-temperature" class="form-range" oninput="document.getElementById('temp-value').textContent = this.value">
+                    <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                        <small style="color: var(--text-light-secondary);">Conservative (0.0)</small>
+                        <small style="color: var(--primary); font-weight: 600;">Current: <span id="temp-value">0.7</span></small>
+                        <small style="color: var(--text-light-secondary);">Creative (1.0)</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Max Response Length (tokens)</label>
+                    <input type="number" class="form-input" id="riley-max-tokens" value="150" min="50" max="500">
+                    <small style="color: var(--text-light-secondary);">Maximum length of responses (50-500 tokens)</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversation Scripts Tab -->
+        <div class="tab-content" id="scripts-tab">
+            <div class="section">
+                <h2 class="section-title">Conversation Scripts & Training Documents</h2>
+                <p style="color: var(--text-light-secondary); margin-bottom: 1.5rem;">
+                    Upload conversation scripts and training documents to teach Riley how to handle specific scenarios.
+                </p>
+
+                <div style="background: var(--bg-light-secondary); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem; border: 2px dashed var(--border-light);">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📄</div>
+                        <h3 style="margin-bottom: 0.5rem;">Upload Training Documents</h3>
+                        <p style="color: var(--text-light-secondary); font-size: 0.875rem;">
+                            Supported formats: TXT, PDF, DOCX, CSV (Max 5MB per file)
+                        </p>
+                    </div>
+                    <input type="file" id="script-upload" accept=".txt,.pdf,.docx,.csv,.md" multiple style="display: none;" onchange="handleScriptUpload(event)">
+                    <button class="btn btn-primary" onclick="document.getElementById('script-upload').click()" style="display: block; margin: 0 auto;">
+                        📤 Choose Files to Upload
+                    </button>
+                </div>
+
+                <div class="section-header">
+                    <h3 class="section-title">Uploaded Scripts</h3>
+                    <button class="btn btn-secondary" onclick="showAddScriptModal()">+ Add Manual Script</button>
+                </div>
+
+                <div id="scripts-list">
+                    <!-- Scripts will be loaded here -->
+                </div>
+            </div>
+        </div>
+
         <!-- Response Templates Tab -->
-        <div class="tab-content active" id="responses-tab">
+        <div class="tab-content" id="responses-tab">
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">Response Templates</h2>
@@ -897,7 +1038,9 @@ City, State 12345</textarea>
             company: 'riley_company',
             negative: 'riley_negative',
             threads: 'riley_threads',
-            activeBot: 'riley_active_bot'
+            activeBot: 'riley_active_bot',
+            settings: 'riley_settings',
+            scripts: 'riley_scripts'
         };
 
         // Data storage
@@ -907,12 +1050,16 @@ City, State 12345</textarea>
             company: {},
             negative: [],
             threads: [],
-            activeBot: null
+            activeBot: null,
+            settings: {},
+            scripts: []
         };
 
         // Initialize
         function init() {
             loadAllData();
+            renderRileySettings();
+            renderScripts();
             renderResponses();
             renderPersonalities();
             renderCompanyInfo();
@@ -929,6 +1076,8 @@ City, State 12345</textarea>
             data.negative = JSON.parse(localStorage.getItem(STORAGE_KEYS.negative)) || getDefaultNegative();
             data.threads = JSON.parse(localStorage.getItem(STORAGE_KEYS.threads)) || [];
             data.activeBot = localStorage.getItem(STORAGE_KEYS.activeBot) || null;
+            data.settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.settings)) || getDefaultSettings();
+            data.scripts = JSON.parse(localStorage.getItem(STORAGE_KEYS.scripts)) || [];
         }
 
         // Get default responses
@@ -991,6 +1140,150 @@ City, State 12345</textarea>
                 'bad reviews',
                 'complaints'
             ];
+        }
+
+        // Get default Riley settings
+        function getDefaultSettings() {
+            return {
+                tone: 'friendly',
+                style: 'conversational',
+                personality: 'Riley is a helpful and knowledgeable assistant for Panda Exteriors. Riley is professional yet approachable, always eager to help customers with their exterior home improvement needs. Riley provides clear information and guides customers toward booking consultations.',
+                guidelines: '1. Always be helpful and courteous\n2. Provide accurate information about services\n3. Guide customers toward scheduling consultations\n4. Ask clarifying questions when needed\n5. Be proactive in offering assistance\n6. Maintain professional boundaries',
+                greeting: "Hi! I'm Riley from Panda Exteriors. How can I help you today?",
+                temperature: 0.7,
+                maxTokens: 150
+            };
+        }
+
+        // Render Riley Settings
+        function renderRileySettings() {
+            document.getElementById('riley-tone').value = data.settings.tone || 'friendly';
+            document.getElementById('riley-style').value = data.settings.style || 'conversational';
+            document.getElementById('riley-personality').value = data.settings.personality || '';
+            document.getElementById('riley-guidelines').value = data.settings.guidelines || '';
+            document.getElementById('riley-greeting').value = data.settings.greeting || '';
+            document.getElementById('riley-temperature').value = data.settings.temperature || 0.7;
+            document.getElementById('temp-value').textContent = data.settings.temperature || 0.7;
+            document.getElementById('riley-max-tokens').value = data.settings.maxTokens || 150;
+        }
+
+        // Save Riley Settings
+        function saveRileySettings() {
+            data.settings = {
+                tone: document.getElementById('riley-tone').value,
+                style: document.getElementById('riley-style').value,
+                personality: document.getElementById('riley-personality').value,
+                guidelines: document.getElementById('riley-guidelines').value,
+                greeting: document.getElementById('riley-greeting').value,
+                temperature: parseFloat(document.getElementById('riley-temperature').value),
+                maxTokens: parseInt(document.getElementById('riley-max-tokens').value)
+            };
+            localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(data.settings));
+        }
+
+        // Render Scripts
+        function renderScripts() {
+            const container = document.getElementById('scripts-list');
+
+            if (data.scripts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <p>No training scripts uploaded yet</p>
+                        <small style="color: var(--text-light-secondary);">Upload conversation scripts to train Riley</small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.scripts.map(script => `
+                <div class="script-card" style="background: var(--bg-light); border: 1px solid var(--border-light); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0; font-size: 1rem; font-weight: 600;">${script.name}</h4>
+                            <p style="margin: 0.25rem 0 0; color: var(--text-light-secondary); font-size: 0.875rem;">
+                                ${script.type} • ${(script.size / 1024).toFixed(1)}KB • ${new Date(script.uploadedAt).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm btn-secondary" onclick="viewScript('${script.id}')">👁️ View</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteScript('${script.id}')">🗑️</button>
+                        </div>
+                    </div>
+                    ${script.description ? `<p style="margin: 0.5rem 0 0; font-size: 0.875rem;">${script.description}</p>` : ''}
+                    ${script.preview ? `<div style="background: var(--bg-light-secondary); padding: 0.75rem; border-radius: 0.25rem; margin-top: 0.5rem; font-size: 0.75rem; font-family: monospace; max-height: 100px; overflow: hidden;">${script.preview.substring(0, 200)}...</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Handle script upload
+        function handleScriptUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            for (let file of files) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+                    continue;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const script = {
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        type: file.type || 'text/plain',
+                        size: file.size,
+                        content: e.target.result,
+                        preview: typeof e.target.result === 'string' ? e.target.result : '',
+                        uploadedAt: Date.now()
+                    };
+                    data.scripts.push(script);
+                    localStorage.setItem(STORAGE_KEYS.scripts, JSON.stringify(data.scripts));
+                    renderScripts();
+                    showSaveIndicator();
+                };
+                reader.readAsText(file);
+            }
+            event.target.value = '';
+        }
+
+        // Show add script modal
+        function showAddScriptModal() {
+            const name = prompt('Enter script name:');
+            if (!name) return;
+
+            const content = prompt('Enter script content (paste conversation):');
+            if (!content) return;
+
+            const script = {
+                id: Date.now(),
+                name: name,
+                type: 'text/plain',
+                size: content.length,
+                content: content,
+                preview: content,
+                uploadedAt: Date.now()
+            };
+            data.scripts.push(script);
+            localStorage.setItem(STORAGE_KEYS.scripts, JSON.stringify(data.scripts));
+            renderScripts();
+            showSaveIndicator();
+        }
+
+        // View script
+        function viewScript(id) {
+            const script = data.scripts.find(s => s.id == id);
+            if (!script) return;
+            alert(script.content);
+        }
+
+        // Delete script
+        function deleteScript(id) {
+            if (!confirm('Delete this script?')) return;
+            data.scripts = data.scripts.filter(s => s.id != id);
+            localStorage.setItem(STORAGE_KEYS.scripts, JSON.stringify(data.scripts));
+            renderScripts();
         }
 
         // Tab switching
@@ -1337,6 +1630,9 @@ City, State 12345</textarea>
 
         // Save all settings
         function saveAllSettings() {
+            // Save Riley settings
+            saveRileySettings();
+
             // Save company info
             data.company = {
                 name: document.getElementById('company-name').value,
