@@ -219,10 +219,12 @@
         }
 
         .column-new .column-header { border-bottom-color: var(--accent-blue); }
+        .column-bailout .column-header { border-bottom-color: var(--accent-red); }
         .column-engaged .column-header { border-bottom-color: var(--accent-green); }
         .column-qualified .column-header { border-bottom-color: var(--accent-yellow); }
         .column-scheduled .column-header { border-bottom-color: var(--accent-purple); }
         .column-completed .column-header { border-bottom-color: var(--text-secondary); }
+        .column-discard .column-header { border-bottom-color: #6b7280; }
 
         .column-cards {
             flex: 1;
@@ -330,6 +332,8 @@
         .tag.tag-sms { background: rgba(74, 158, 255, 0.2); color: var(--accent-blue); }
         .tag.tag-web { background: rgba(0, 212, 170, 0.2); color: var(--accent-green); }
         .tag.tag-urgent { background: rgba(255, 71, 87, 0.2); color: var(--accent-red); }
+        .tag.tag-followup { background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); font-weight: 600; }
+        .tag.tag-confirm { background: rgba(155, 89, 255, 0.2); color: var(--accent-purple); font-weight: 600; }
 
         .card-actions {
             display: flex;
@@ -583,6 +587,18 @@
             <div class="column-cards" id="cards-new"></div>
         </div>
 
+        <!-- Bailout -->
+        <div class="kanban-column column-bailout" data-status="bailout">
+            <div class="column-header">
+                <div class="column-title">
+                    <span>🚨</span>
+                    <span>Bailout</span>
+                </div>
+                <div class="column-count" id="count-bailout">0</div>
+            </div>
+            <div class="column-cards" id="cards-bailout"></div>
+        </div>
+
         <!-- Engaged -->
         <div class="kanban-column column-engaged" data-status="engaged">
             <div class="column-header">
@@ -629,6 +645,18 @@
                 <div class="column-count" id="count-completed">0</div>
             </div>
             <div class="column-cards" id="cards-completed"></div>
+        </div>
+
+        <!-- Discard -->
+        <div class="kanban-column column-discard" data-status="discard">
+            <div class="column-header">
+                <div class="column-title">
+                    <span>🗑️</span>
+                    <span>Discard</span>
+                </div>
+                <div class="column-count" id="count-discard">0</div>
+            </div>
+            <div class="column-cards" id="cards-discard"></div>
         </div>
     </div>
 
@@ -701,7 +729,7 @@
 
             renderConversations() {
                 // Clear all columns
-                ['new', 'engaged', 'qualified', 'scheduled', 'completed'].forEach(status => {
+                ['new', 'bailout', 'engaged', 'qualified', 'scheduled', 'completed', 'discard'].forEach(status => {
                     const container = document.getElementById(`cards-${status}`);
                     container.innerHTML = '';
                     document.getElementById(`count-${status}`).textContent = '0';
@@ -724,10 +752,12 @@
             groupByStatus() {
                 const grouped = {
                     new: [],
+                    bailout: [],
                     engaged: [],
                     qualified: [],
                     scheduled: [],
-                    completed: []
+                    completed: [],
+                    discard: []
                 };
 
                 this.conversations.forEach(conv => {
@@ -752,6 +782,18 @@
                 const isUrgent = conversation.lastMessage?.toLowerCase().includes('urgent') ||
                                 conversation.lastMessage?.toLowerCase().includes('asap');
 
+                // Determine tags based on status
+                const statusTags = [];
+                if (conversation.status === 'engaged' && !conversation.hasBooked && !conversation.hasProvidedNeeds) {
+                    statusTags.push('<span class="tag tag-followup">Follow Up</span>');
+                }
+                if (conversation.status === 'qualified' && conversation.hasProvidedNeeds && !conversation.hasBooked) {
+                    statusTags.push('<span class="tag tag-followup">Follow Up</span>');
+                }
+                if (conversation.status === 'scheduled' && conversation.hasBooked) {
+                    statusTags.push('<span class="tag tag-confirm">Confirm</span>');
+                }
+
                 card.innerHTML = `
                     <div class="card-header">
                         <div class="customer-info">
@@ -767,6 +809,7 @@
                         <div class="card-tags">
                             <span class="tag tag-${conversation.channel || 'sms'}">${conversation.channel || 'sms'}</span>
                             ${isUrgent ? '<span class="tag tag-urgent">urgent</span>' : ''}
+                            ${statusTags.join('')}
                             ${conversation.messageCount ? `<span class="tag">${conversation.messageCount} msgs</span>` : ''}
                         </div>
                         <div class="card-actions">

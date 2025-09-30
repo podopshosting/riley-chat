@@ -315,6 +315,74 @@
             gap: 1rem;
             font-size: 0.75rem;
             color: var(--gray-500);
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-green {
+            background: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-red {
+            background: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .takeover-btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            background: linear-gradient(135deg, #6D1A86, #2CC5FF);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .takeover-btn:hover {
+            opacity: 0.9;
+        }
+
+        .mode-badge {
+            padding: 0.125rem 0.5rem;
+            font-size: 0.625rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .mode-auto {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .mode-manual {
+            background: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
         }
 
         .conversation-badge {
@@ -607,7 +675,9 @@
                         lastMessage: 'Hi, I\'m interested in getting a roofing quote for my home.',
                         time: '2 min ago',
                         status: 'active',
-                        unread: 2
+                        unread: 2,
+                        needsHelp: false,
+                        mode: 'auto'
                     },
                     {
                         id: 2,
@@ -616,7 +686,9 @@
                         lastMessage: 'Thanks for the information! When can someone come for an inspection?',
                         time: '15 min ago',
                         status: 'active',
-                        unread: 0
+                        unread: 0,
+                        needsHelp: true,
+                        mode: 'auto'
                     },
                     {
                         id: 3,
@@ -625,7 +697,9 @@
                         lastMessage: 'Perfect, I\'ll be available tomorrow afternoon.',
                         time: '1 hour ago',
                         status: 'pending',
-                        unread: 0
+                        unread: 0,
+                        needsHelp: false,
+                        mode: 'auto'
                     },
                     {
                         id: 4,
@@ -634,7 +708,9 @@
                         lastMessage: 'Thank you for your help!',
                         time: '3 hours ago',
                         status: 'closed',
-                        unread: 0
+                        unread: 0,
+                        needsHelp: false,
+                        mode: 'manual'
                     }
                 ];
                 this.renderConversations();
@@ -658,9 +734,13 @@
                 }
 
                 listElement.innerHTML = filtered.map(conv => `
-                    <div class="conversation-item ${conv.unread > 0 ? 'active' : ''}" data-id="${conv.id}">
+                    <div class="conversation-item ${conv.unread > 0 ? 'active' : ''}" data-id="${conv.id}" onclick="window.RileyDashboard.viewConversation(${conv.id})">
                         <div class="conversation-header">
-                            <span class="conversation-name">${conv.name}</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                ${conv.mode ? `<span class="status-dot status-${conv.needsHelp ? 'red' : 'green'}" title="${conv.needsHelp ? 'Needs help' : 'Going well'}"></span>` : ''}
+                                <span class="conversation-name">${conv.name}</span>
+                                ${conv.mode ? `<span class="mode-badge mode-${conv.mode}">${conv.mode}</span>` : ''}
+                            </div>
                             <span class="conversation-time">${conv.time}</span>
                         </div>
                         <div class="conversation-preview">${conv.lastMessage}</div>
@@ -668,6 +748,7 @@
                             <span>${conv.phone}</span>
                             <span class="conversation-badge badge-${conv.status}">${conv.status}</span>
                             ${conv.unread > 0 ? `<span style="color: var(--primary); font-weight: 600;">${conv.unread} new</span>` : ''}
+                            ${conv.mode === 'auto' ? `<button class="takeover-btn" onclick="event.stopPropagation(); window.RileyDashboard.takeOverConversation(${conv.id})">Take Over</button>` : ''}
                         </div>
                     </div>
                 `).join('');
@@ -721,6 +802,60 @@
                 document.getElementById('response-rate').textContent = '94%';
                 document.getElementById('response-time').textContent = '45s';
                 document.getElementById('leads-today').textContent = '24';
+            },
+
+            viewConversation(id) {
+                const conversation = this.conversations.find(c => c.id === id);
+                if (!conversation) return;
+
+                // For now, open in kanban view
+                // TODO: Implement modal or side panel for conversation details
+                console.log('Viewing conversation:', conversation);
+
+                // Navigate to conversations view with this conversation selected
+                if (window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'openConversation',
+                        conversationId: id,
+                        conversation: conversation
+                    }, '*');
+                } else {
+                    alert(`Opening conversation with ${conversation.name}\n\nPhone: ${conversation.phone}\nLast message: ${conversation.lastMessage}\n\nThis would open the full conversation view in the kanban dashboard.`);
+                }
+            },
+
+            takeOverConversation(id) {
+                const conversation = this.conversations.find(c => c.id === id);
+                if (!conversation) return;
+
+                if (confirm(`Take over conversation with ${conversation.name}?\n\nThis will switch from auto mode to manual mode, and you'll need to respond to messages yourself.`)) {
+                    // Update conversation mode
+                    conversation.mode = 'manual';
+
+                    // Re-render conversations to update UI
+                    this.renderConversations();
+
+                    // Send notification
+                    console.log('Took over conversation:', conversation);
+
+                    // In a real implementation, this would:
+                    // 1. Send API request to backend to switch mode
+                    // 2. Disable Riley auto-responses for this conversation
+                    // 3. Notify the agent
+                    // 4. Open the conversation view
+
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #6D1A86, #2CC5FF); color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10000;';
+                    successMsg.textContent = `✓ Conversation with ${conversation.name} switched to manual mode`;
+                    document.body.appendChild(successMsg);
+
+                    setTimeout(() => {
+                        successMsg.style.transition = 'opacity 0.3s';
+                        successMsg.style.opacity = '0';
+                        setTimeout(() => successMsg.remove(), 300);
+                    }, 3000);
+                }
             },
 
             setupEventListeners() {
