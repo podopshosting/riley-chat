@@ -1491,6 +1491,8 @@ City, State 12345</textarea>
 
         // Modal functions
         function showAddResponseModal() {
+            editingResponseId = null;
+            clearResponseForm();
             document.getElementById('response-modal').classList.add('active');
         }
 
@@ -1541,9 +1543,11 @@ City, State 12345</textarea>
         }
 
         // Save response
+        let editingResponseId = null;
+
         function saveResponse() {
             const response = {
-                id: Date.now(),
+                id: editingResponseId || Date.now(),
                 category: document.getElementById('response-category').value,
                 triggers: document.getElementById('response-triggers').value.split(',').map(t => t.trim()),
                 template: document.getElementById('response-template').value,
@@ -1567,11 +1571,85 @@ City, State 12345</textarea>
                 }
             });
 
-            data.responses.push(response);
+            if (editingResponseId) {
+                // Update existing response
+                const index = data.responses.findIndex(r => r.id === editingResponseId);
+                if (index !== -1) {
+                    data.responses[index] = response;
+                }
+                editingResponseId = null;
+            } else {
+                // Add new response
+                data.responses.push(response);
+            }
+
             localStorage.setItem(STORAGE_KEYS.responses, JSON.stringify(data.responses));
             renderResponses();
             closeModal('response-modal');
+            clearResponseForm();
             showSaveIndicator();
+        }
+
+        function editResponse(id) {
+            const response = data.responses.find(r => r.id === id);
+            if (!response) return;
+
+            editingResponseId = id;
+
+            // Populate form
+            document.getElementById('response-category').value = response.category;
+            document.getElementById('response-triggers').value = response.triggers.join(', ');
+            document.getElementById('response-template').value = response.template;
+            document.getElementById('channel-sms').checked = response.channels.includes('sms');
+            document.getElementById('channel-email').checked = response.channels.includes('email');
+
+            // Clear and populate follow-ups
+            const followupContainer = document.getElementById('followup-container');
+            const existingFollowups = followupContainer.querySelectorAll('div');
+            existingFollowups.forEach(div => div.remove());
+
+            response.followups.forEach(followup => {
+                const div = document.createElement('div');
+                div.style.marginBottom = '0.5rem';
+                div.innerHTML = `
+                    <input type="text" class="form-input" value="${followup.delay}" placeholder="Delay (e.g., 1h, 24h)" style="width: 100px; display: inline-block;">
+                    <select class="form-select" style="width: 100px; display: inline-block; margin: 0 0.5rem;">
+                        <option value="sms" ${followup.channel === 'sms' ? 'selected' : ''}>SMS</option>
+                        <option value="email" ${followup.channel === 'email' ? 'selected' : ''}>Email</option>
+                    </select>
+                    <input type="text" class="form-input" value="${followup.message}" placeholder="Follow-up message..." style="width: calc(100% - 230px); display: inline-block;">
+                `;
+                followupContainer.insertBefore(div, followupContainer.firstChild);
+            });
+
+            // Update modal title
+            document.querySelector('#response-modal .modal-title').textContent = 'Edit Response Template';
+
+            // Show modal
+            document.getElementById('response-modal').classList.add('active');
+        }
+
+        function deleteResponse(id) {
+            if (confirm('Are you sure you want to delete this response template?')) {
+                data.responses = data.responses.filter(r => r.id !== id);
+                localStorage.setItem(STORAGE_KEYS.responses, JSON.stringify(data.responses));
+                renderResponses();
+                showSaveIndicator();
+            }
+        }
+
+        function clearResponseForm() {
+            document.getElementById('response-category').value = '';
+            document.getElementById('response-triggers').value = '';
+            document.getElementById('response-template').value = '';
+            document.getElementById('channel-sms').checked = true;
+            document.getElementById('channel-email').checked = false;
+
+            const followupContainer = document.getElementById('followup-container');
+            const followups = followupContainer.querySelectorAll('div');
+            followups.forEach(div => div.remove());
+
+            document.querySelector('#response-modal .modal-title').textContent = 'Add Response Template';
         }
 
         // Save personality
