@@ -846,12 +846,20 @@
         const USERS_KEY = 'riley_users';
         const THEME_KEY = 'riley_theme';
 
-        // Initialize with super admin
+        // Initialize with super admins
         let users = JSON.parse(localStorage.getItem(USERS_KEY)) || [
             {
                 email: 'robwinters@pandaexteriors.com',
                 name: 'Rob Winters',
                 password: btoa('admin123'), // Base64 encoded for basic security
+                role: 'admin',
+                permissions: ['conversations', 'analytics', 'training', 'admin'],
+                status: 'active'
+            },
+            {
+                email: 'robwinters+test@pandaexteriors.com',
+                name: 'Rob Winters (Test)',
+                password: btoa('Panda2025!'), // Base64 encoded for basic security
                 role: 'admin',
                 permissions: ['conversations', 'analytics', 'training', 'admin'],
                 status: 'active'
