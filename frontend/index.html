@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riley Portal - Panda Exteriors</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐼</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg-light: #FFFFFF;
+            --bg-light-secondary: #F3F4F6;
+            --text-light: #111827;
+            --text-light-secondary: #6B7280;
+            --border-light: #E5E7EB;
+
+            /* Dark mode colors */
+            --bg-dark: #0F0F23;
+            --bg-dark-secondary: #1A1A2E;
+            --text-dark: #FFFFFF;
+            --text-dark-secondary: #A0A0B8;
+            --border-dark: #2A2A4A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .login-box {
+            background: var(--bg-light);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        body.dark-mode .login-box {
+            background: var(--bg-dark-secondary);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-logo h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-light-secondary);
+        }
+
+        body.dark-mode .form-label {
+            color: var(--text-dark-secondary);
+        }
+
+        .form-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .form-input {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .login-button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        /* Main App Container */
+        .app-container {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .app-container.active {
+            display: flex;
+        }
+
+        /* Header */
+        .app-header {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .app-header {
+            background: var(--bg-dark-secondary);
+            border-bottom-color: var(--border-dark);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.5rem;
+            color: var(--text-light-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .nav-tab {
+            color: var(--text-dark-secondary);
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-light-secondary);
+        }
+
+        body.dark-mode .nav-tab:hover {
+            background: var(--bg-dark);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-tab.hidden {
+            display: none;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--bg-light-secondary);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+        }
+
+        .theme-toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        body.dark-mode .theme-toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        body.dark-mode .user-button {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: none;
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        body.dark-mode .user-dropdown {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        body.dark-mode .dropdown-item {
+            color: var(--text-dark);
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-light-secondary);
+        }
+
+        body.dark-mode .dropdown-item:hover {
+            background: var(--bg-dark);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 0.5rem 0;
+        }
+
+        body.dark-mode .dropdown-divider {
+            background: var(--border-dark);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-content {
+            display: none;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Loading Spinner */
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            padding: 2rem;
+            height: 100%;
+            overflow-y: auto;
+            background: var(--bg-light-secondary);
+        }
+
+        body.dark-mode .admin-panel {
+            background: var(--bg-dark);
+        }
+
+        .admin-section {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .admin-section {
+            background: var(--bg-dark-secondary);
+            border-color: var(--border-dark);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .section-title {
+            color: var(--text-dark);
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .users-table th,
+        body.dark-mode .users-table td {
+            border-bottom-color: var(--border-dark);
+        }
+
+        .users-table th {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-light-secondary);
+        }
+
+        body.dark-mode .users-table th {
+            color: var(--text-dark-secondary);
+        }
+
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .role-badge.admin {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .role-badge.agent {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .action-button {
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-light-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+        }
+
+        body.dark-mode .action-button {
+            background: var(--bg-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .action-button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .modal-content {
+            background: var(--bg-dark-secondary);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .modal-title {
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary {
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            padding: 0.5rem 1rem;
+            background: var(--bg-light-secondary);
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        body.dark-mode .btn-secondary {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+
+            .app-header {
+                padding: 1rem;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>🐼 Riley Portal</h1>
+                <p style="color: var(--text-light-secondary); font-size: 0.875rem; font-weight: 400; margin-top: 0.5rem;">
+                    Panda Exteriors Management System
+                </p>
+            </div>
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="loginEmail" required
+                           placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" required
+                           placeholder="Enter your password">
+                </div>
+                <div class="login-error" id="loginError">
+                    Invalid email or password. Please try again.
+                </div>
+                <button type="submit" class="login-button" id="loginButton">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="app-logo">
+                    <span>🐼</span>
+                    <span>Riley Portal</span>
+                </div>
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" data-tab="kanban" onclick="switchTab('kanban')">
+                        Conversations
+                    </button>
+                    <button class="nav-tab" data-tab="dashboard" onclick="switchTab('dashboard')">
+                        Analytics
+                    </button>
+                    <button class="nav-tab" data-tab="training" onclick="switchTab('training')">
+                        Training
+                    </button>
+                    <button class="nav-tab" data-tab="admin" id="adminTab" onclick="switchTab('admin')">
+                        Admin
+                    </button>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <div class="theme-toggle-slider">
+                        <span id="themeIcon">☀️</span>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <button class="user-button" onclick="toggleUserMenu()">
+                        <span id="userEmail">User</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-item" id="userRole">Role: Agent</div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item" onclick="logout()">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Kanban Tab -->
+            <div class="tab-content active" id="kanban-tab">
+                <iframe src="kanban-dashboard.html" class="tab-frame" id="kanbanFrame"></iframe>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content" id="dashboard-tab">
+                <iframe src="admin-dashboard.html" class="tab-frame" id="dashboardFrame"></iframe>
+            </div>
+
+            <!-- Training Tab -->
+            <div class="tab-content" id="training-tab">
+                <iframe src="training-module.html" class="tab-frame" id="trainingFrame"></iframe>
+            </div>
+
+            <!-- Admin Tab -->
+            <div class="tab-content" id="admin-tab">
+                <div class="admin-panel">
+                    <div class="admin-section">
+                        <h2 class="section-title">User Management</h2>
+                        <div style="margin-bottom: 1rem;">
+                            <button class="btn-primary" onclick="showAddUserModal()">+ Add New User</button>
+                        </div>
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Permissions</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="admin-section">
+                        <h2 class="section-title">System Settings</h2>
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" class="form-input" value="Panda Exteriors" readonly>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label">Twilio Webhook URL</label>
+                            <input type="text" class="form-input"
+                                   value="https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod/riley/twilio"
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New User</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="userModalEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="userModalName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="userModalPassword"
+                           placeholder="Leave blank to keep existing">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-input" id="userModalRole" onchange="updatePermissions()">
+                        <option value="agent">Agent</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Permissions</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="perm-conversations" checked>
+                            <span>Conversations</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="perm-analytics">
+                            <span>Analytics</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="perm-training">
+                            <span>Training</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="perm-admin">
+                            <span>Admin Panel</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeUserModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveUser()">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="riley-api-client.js"></script>
+    <script>
+        // User Management System
+        const AUTH_KEY = 'riley_auth';
+        const USERS_KEY = 'riley_users';
+        const THEME_KEY = 'riley_theme';
+
+        // Initialize with super admin
+        let users = JSON.parse(localStorage.getItem(USERS_KEY)) || [
+            {
+                email: 'robwinters@pandaexteriors.com',
+                name: 'Rob Winters',
+                password: btoa('admin123'), // Base64 encoded for basic security
+                role: 'admin',
+                permissions: ['conversations', 'analytics', 'training', 'admin'],
+                status: 'active'
+            }
+        ];
+
+        // Save initial users if not exists
+        if (!localStorage.getItem(USERS_KEY)) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
+
+        let currentUser = null;
+        let editingUserId = null;
+
+        // Check if user is already logged in
+        function checkAuth() {
+            const auth = localStorage.getItem(AUTH_KEY);
+            if (auth) {
+                currentUser = JSON.parse(auth);
+                showApp();
+            }
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const button = document.getElementById('loginButton');
+            const error = document.getElementById('loginError');
+
+            button.disabled = true;
+            button.textContent = 'Signing in...';
+            error.classList.remove('show');
+
+            // Simulate authentication delay
+            setTimeout(() => {
+                const user = users.find(u =>
+                    u.email === email &&
+                    u.password === btoa(password) &&
+                    u.status === 'active'
+                );
+
+                if (user) {
+                    currentUser = {
+                        email: user.email,
+                        name: user.name,
+                        role: user.role,
+                        permissions: user.permissions
+                    };
+                    localStorage.setItem(AUTH_KEY, JSON.stringify(currentUser));
+                    showApp();
+                } else {
+                    error.classList.add('show');
+                    button.disabled = false;
+                    button.textContent = 'Sign In';
+                }
+            }, 500);
+        }
+
+        // Show main app
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').classList.add('active');
+
+            // Update UI with user info
+            document.getElementById('userEmail').textContent = currentUser.name || currentUser.email;
+            document.getElementById('userRole').textContent = `Role: ${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}`;
+
+            // Show/hide tabs based on permissions
+            updateTabVisibility();
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeIcon').textContent = '🌙';
+            }
+
+            // Load admin panel if user is admin
+            if (currentUser.permissions.includes('admin')) {
+                loadUsers();
+            }
+
+            // Apply theme to iframes
+            updateIframeThemes();
+        }
+
+        // Update tab visibility based on permissions
+        function updateTabVisibility() {
+            const tabMapping = {
+                'conversations': 'kanban',
+                'analytics': 'dashboard',
+                'training': 'training',
+                'admin': 'admin'
+            };
+
+            Object.entries(tabMapping).forEach(([permission, tabName]) => {
+                const tab = document.querySelector(`[data-tab="${tabName}"]`);
+                if (tab) {
+                    if (currentUser.permissions.includes(permission)) {
+                        tab.classList.remove('hidden');
+                    } else {
+                        tab.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Switch to first available tab
+            const firstVisibleTab = document.querySelector('.nav-tab:not(.hidden)');
+            if (firstVisibleTab) {
+                switchTab(firstVisibleTab.dataset.tab);
+            }
+        }
+
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Check permission
+            const permissionMap = {
+                'kanban': 'conversations',
+                'dashboard': 'analytics',
+                'training': 'training',
+                'admin': 'admin'
+            };
+
+            if (!currentUser.permissions.includes(permissionMap[tabName])) {
+                return;
+            }
+
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+            localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+
+            // Update iframe themes
+            updateIframeThemes();
+        }
+
+        // Update iframe themes
+        function updateIframeThemes() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const iframes = document.querySelectorAll('.tab-frame');
+
+            iframes.forEach(iframe => {
+                try {
+                    if (iframe.contentWindow && iframe.contentWindow.document) {
+                        if (isDark) {
+                            iframe.contentWindow.document.body.classList.add('dark-mode');
+                        } else {
+                            iframe.contentWindow.document.body.classList.remove('dark-mode');
+                        }
+                    }
+                } catch (e) {
+                    // Cross-origin restriction, iframe will handle its own theme
+                }
+            });
+        }
+
+        // Toggle user menu
+        function toggleUserMenu() {
+            document.getElementById('userDropdown').classList.toggle('show');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-menu')) {
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem(AUTH_KEY);
+            currentUser = null;
+            location.reload();
+        }
+
+        // Load users in admin panel
+        function loadUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.email}</td>
+                    <td>${user.name}</td>
+                    <td><span class="role-badge ${user.role}">${user.role}</span></td>
+                    <td>${user.permissions.join(', ')}</td>
+                    <td>${user.status === 'active' ? '✅ Active' : '❌ Inactive'}</td>
+                    <td>
+                        <button class="action-button" onclick="editUser(${index})">Edit</button>
+                        ${user.email !== 'robwinters@pandaexteriors.com' ?
+                            `<button class="action-button" onclick="toggleUserStatus(${index})">
+                                ${user.status === 'active' ? 'Disable' : 'Enable'}
+                            </button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Show add user modal
+        function showAddUserModal() {
+            editingUserId = null;
+            document.getElementById('modalTitle').textContent = 'Add New User';
+            document.getElementById('userModalEmail').value = '';
+            document.getElementById('userModalName').value = '';
+            document.getElementById('userModalPassword').value = '';
+            document.getElementById('userModalPassword').required = true;
+            document.getElementById('userModalRole').value = 'agent';
+            updatePermissions();
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        // Edit user
+        function editUser(index) {
+            editingUserId = index;
+            const user = users[index];
+            document.getElementById('modalTitle').textContent = 'Edit User';
+            document.getElementById('userModalEmail').value = user.email;
+            document.getElementById('userModalName').value = user.name;
+            document.getElementById('userModalPassword').value = '';
+            document.getElementById('userModalPassword').required = false;
+            document.getElementById('userModalRole').value = user.role;
+
+            // Set permissions
+            user.permissions.forEach(perm => {
+                const checkbox = document.getElementById(`perm-${perm}`);
+                if (checkbox) checkbox.checked = true;
+            });
+
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        // Update permissions based on role
+        function updatePermissions() {
+            const role = document.getElementById('userModalRole').value;
+
+            if (role === 'admin') {
+                document.getElementById('perm-conversations').checked = true;
+                document.getElementById('perm-analytics').checked = true;
+                document.getElementById('perm-training').checked = true;
+                document.getElementById('perm-admin').checked = true;
+            } else {
+                document.getElementById('perm-conversations').checked = true;
+                document.getElementById('perm-analytics').checked = false;
+                document.getElementById('perm-training').checked = false;
+                document.getElementById('perm-admin').checked = false;
+            }
+        }
+
+        // Save user
+        function saveUser() {
+            const email = document.getElementById('userModalEmail').value;
+            const name = document.getElementById('userModalName').value;
+            const password = document.getElementById('userModalPassword').value;
+            const role = document.getElementById('userModalRole').value;
+
+            const permissions = [];
+            if (document.getElementById('perm-conversations').checked) permissions.push('conversations');
+            if (document.getElementById('perm-analytics').checked) permissions.push('analytics');
+            if (document.getElementById('perm-training').checked) permissions.push('training');
+            if (document.getElementById('perm-admin').checked) permissions.push('admin');
+
+            if (editingUserId !== null) {
+                // Edit existing user
+                users[editingUserId].email = email;
+                users[editingUserId].name = name;
+                if (password) users[editingUserId].password = btoa(password);
+                users[editingUserId].role = role;
+                users[editingUserId].permissions = permissions;
+            } else {
+                // Add new user
+                users.push({
+                    email,
+                    name,
+                    password: btoa(password),
+                    role,
+                    permissions,
+                    status: 'active'
+                });
+            }
+
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            loadUsers();
+            closeUserModal();
+        }
+
+        // Close user modal
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('show');
+            editingUserId = null;
+        }
+
+        // Toggle user status
+        function toggleUserStatus(index) {
+            users[index].status = users[index].status === 'active' ? 'inactive' : 'active';
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            loadUsers();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        // Apply theme to iframes when they load
+        window.addEventListener('load', () => {
+            const iframes = document.querySelectorAll('.tab-frame');
+            iframes.forEach(iframe => {
+                iframe.addEventListener('load', () => {
+                    updateIframeThemes();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
