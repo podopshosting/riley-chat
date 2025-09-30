@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riley Training Module - Panda Exteriors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            color: var(--primary);
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Training Section */
+        .training-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .script-categories {
+            padding: 1rem;
+        }
+
+        .category-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-item:hover {
+            background: var(--gray-50);
+        }
+
+        .category-item.active {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .category-count {
+            background: var(--gray-200);
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .category-item.active .category-count {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .content-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-subtitle {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        /* Scripts Display */
+        .scripts-container {
+            padding: 1.5rem;
+        }
+
+        .script-card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .script-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .script-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .badge-greeting { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+        .badge-appointment { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-followup { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-closing { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .script-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .script-variables {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .variable-tag {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Training Controls */
+        .training-controls {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+        }
+
+        /* Response Builder */
+        .response-builder {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .builder-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .suggested-responses {
+            background: var(--gray-50);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .suggested-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .response-option {
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .response-option:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        /* Stats Section */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .training-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+    <script src="riley-api.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>🎓 Riley Training Module</h1>
+            </div>
+            <nav class="nav-tabs">
+                <a href="admin-dashboard.html" class="nav-tab">Dashboard</a>
+                <a href="training-module.html" class="nav-tab active">Training</a>
+                <a href="#" class="nav-tab">Analytics</a>
+                <a href="#" class="nav-tab">Settings</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Active Scripts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">95%</div>
+                <div class="stat-label">Response Accuracy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1,247</div>
+                <div class="stat-label">Trained Responses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Customer Satisfaction</div>
+            </div>
+        </div>
+
+        <!-- Training Grid -->
+        <div class="training-grid">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2 class="sidebar-title">Script Categories</h2>
+                </div>
+                <div class="script-categories">
+                    <div class="category-item active" data-category="appointment">
+                        <span>📅 Appointment Confirmation</span>
+                        <span class="category-count">3</span>
+                    </div>
+                    <div class="category-item" data-category="greeting">
+                        <span>👋 Greetings & Introduction</span>
+                        <span class="category-count">2</span>
+                    </div>
+                    <div class="category-item" data-category="roofing">
+                        <span>🏠 Roofing Inquiries</span>
+                        <span class="category-count">4</span>
+                    </div>
+                    <div class="category-item" data-category="pricing">
+                        <span>💰 Pricing & Quotes</span>
+                        <span class="category-count">3</span>
+                    </div>
+                    <div class="category-item" data-category="followup">
+                        <span>📞 Follow-up Messages</span>
+                        <span class="category-count">2</span>
+                    </div>
+                    <div class="category-item" data-category="closing">
+                        <span>✅ Closing & Thank You</span>
+                        <span class="category-count">2</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Appointment Confirmation Scripts</h2>
+                    <p class="content-subtitle">Text message templates for confirming appointments and inspections</p>
+                </div>
+
+                <div class="scripts-container" id="scripts-container">
+                    <!-- Appointment Confirmation Scripts -->
+                    <div class="script-card" data-category="appointment">
+                        <div class="script-header">
+                            <h3 class="script-title">Initial Appointment Confirmation</h3>
+                            <span class="script-badge badge-appointment">APPOINTMENT</span>
+                        </div>
+                        <div class="script-variables">
+                            <span class="variable-tag">{customer_name}</span>
+                            <span class="variable-tag">{date}</span>
+                            <span class="variable-tag">{time}</span>
+                            <span class="variable-tag">{service_type}</span>
+                            <span class="variable-tag">{address}</span>
+                        </div>
+                        <div class="script-content">Hi {customer_name}! This is Riley from Panda Exteriors confirming your {service_type} inspection appointment for {date} at {time}.
+
+Address: {address}
+
+Our specialist will arrive within the scheduled time window. They'll be in a Panda Exteriors vehicle and uniform.
+
+Please ensure someone 18+ is present during the inspection.
+
+Reply YES to confirm or CALL to speak with someone.
+
+Thank you for choosing Panda Exteriors!</div>
+                    </div>
+
+                    <div class="script-card" data-category="appointment">
+                        <div class="script-header">
+                            <h3 class="script-title">Day-Before Reminder</h3>
+                            <span class="script-badge badge-appointment">APPOINTMENT</span>
+                        </div>
+                        <div class="script-variables">
+                            <span class="variable-tag">{customer_name}</span>
+                            <span class="variable-tag">{time}</span>
+                            <span class="variable-tag">{specialist_name}</span>
+                        </div>
+                        <div class="script-content">Hi {customer_name}! This is a friendly reminder from Panda Exteriors about your appointment tomorrow at {time}.
+
+{specialist_name} will be your specialist. They'll text you when they're on the way!
+
+If you need to reschedule, please call us at (555) 123-4567.
+
+See you tomorrow! 🏠</div>
+                    </div>
+
+                    <div class="script-card" data-category="appointment">
+                        <div class="script-header">
+                            <h3 class="script-title">On-the-Way Notification</h3>
+                            <span class="script-badge badge-appointment">APPOINTMENT</span>
+                        </div>
+                        <div class="script-variables">
+                            <span class="variable-tag">{customer_name}</span>
+                            <span class="variable-tag">{eta_minutes}</span>
+                            <span class="variable-tag">{specialist_name}</span>
+                        </div>
+                        <div class="script-content">Hi {customer_name}! {specialist_name} from Panda Exteriors is on the way to your property!
+
+ETA: Approximately {eta_minutes} minutes
+
+They're driving a white truck with our Panda logo. Please have any pets secured.
+
+Thanks for your patience!</div>
+                    </div>
+                </div>
+
+                <!-- Training Controls -->
+                <div class="training-controls">
+                    <button class="btn btn-primary" onclick="saveScripts()">Save Scripts</button>
+                    <button class="btn btn-secondary" onclick="testScript()">Test Script</button>
+                    <button class="btn btn-secondary" onclick="exportScripts()">Export All</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- Response Builder -->
+        <div class="response-builder">
+            <h3 class="builder-title">Response Builder & Tester</h3>
+
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--gray-700);">
+                Test Customer Message:
+            </label>
+            <textarea class="message-input" id="test-message" placeholder="Enter a sample customer message to see how Riley would respond...">Hi, I need to confirm my roofing inspection for tomorrow</textarea>
+
+            <div class="suggested-responses">
+                <div class="suggested-title">Riley's Suggested Response:</div>
+                <div id="suggested-response" class="response-option">
+                    Click "Generate Response" to see how Riley would respond to this message
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" onclick="generateResponse()">Generate Response</button>
+                <button class="btn btn-secondary" onclick="trainResponse()">Train Custom Response</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Training Module Controller
+        const TrainingModule = {
+            scripts: {
+                appointment: [
+                    {
+                        title: "Initial Appointment Confirmation",
+                        variables: ["{customer_name}", "{date}", "{time}", "{service_type}", "{address}"],
+                        content: "Hi {customer_name}! This is Riley from Panda Exteriors confirming your {service_type} inspection appointment for {date} at {time}.\n\nAddress: {address}\n\nOur specialist will arrive within the scheduled time window. They'll be in a Panda Exteriors vehicle and uniform.\n\nPlease ensure someone 18+ is present during the inspection.\n\nReply YES to confirm or CALL to speak with someone.\n\nThank you for choosing Panda Exteriors!"
+                    },
+                    {
+                        title: "Day-Before Reminder",
+                        variables: ["{customer_name}", "{time}", "{specialist_name}"],
+                        content: "Hi {customer_name}! This is a friendly reminder from Panda Exteriors about your appointment tomorrow at {time}.\n\n{specialist_name} will be your specialist. They'll text you when they're on the way!\n\nIf you need to reschedule, please call us at (555) 123-4567.\n\nSee you tomorrow! 🏠"
+                    },
+                    {
+                        title: "On-the-Way Notification",
+                        variables: ["{customer_name}", "{eta_minutes}", "{specialist_name}"],
+                        content: "Hi {customer_name}! {specialist_name} from Panda Exteriors is on the way to your property!\n\nETA: Approximately {eta_minutes} minutes\n\nThey're driving a white truck with our Panda logo. Please have any pets secured.\n\nThanks for your patience!"
+                    }
+                ],
+                greeting: [
+                    {
+                        title: "Initial Contact",
+                        variables: ["{agent_name}"],
+                        content: "Hi! I'm {agent_name} from Panda Exteriors. Thanks for your interest in our services! How can I help you today?"
+                    },
+                    {
+                        title: "Response to Inquiry",
+                        variables: ["{customer_name}", "{service}"],
+                        content: "Hi {customer_name}! Thanks for reaching out about {service}. I'd be happy to help you with that. When would be a good time for a free inspection?"
+                    }
+                ],
+                roofing: [
+                    {
+                        title: "Roofing Inspection Offer",
+                        variables: [],
+                        content: "Great question about roofing! We offer free comprehensive roof inspections. Our specialist will check for damage, wear, and provide a detailed report with photos.\n\nWould you like to schedule your free inspection this week?"
+                    },
+                    {
+                        title: "Storm Damage Response",
+                        variables: [],
+                        content: "I understand you may have storm damage. We offer emergency inspections within 24 hours. Our team specializes in insurance claims and can help document everything.\n\nCan I schedule an urgent inspection for you?"
+                    }
+                ],
+                pricing: [
+                    {
+                        title: "Quote Request Response",
+                        variables: [],
+                        content: "I'd be happy to provide you with a detailed quote! Every home is unique, so we offer free in-person estimates to give you the most accurate pricing.\n\nOur estimates include all materials, labor, and warranty information.\n\nWhen works best for you - morning or afternoon?"
+                    }
+                ],
+                followup: [
+                    {
+                        title: "Post-Inspection Follow-up",
+                        variables: ["{customer_name}", "{date}"],
+                        content: "Hi {customer_name}! Following up on your inspection from {date}. Did you have a chance to review the report we sent?\n\nI'm here if you have any questions or would like to discuss your options.\n\nReply or call us at (555) 123-4567."
+                    }
+                ],
+                closing: [
+                    {
+                        title: "Thank You Message",
+                        variables: ["{customer_name}"],
+                        content: "Thank you {customer_name}! We appreciate your business and look forward to working with you.\n\nIf you need anything else, don't hesitate to reach out.\n\nHave a great day!"
+                    }
+                ]
+            },
+
+            init() {
+                this.setupEventListeners();
+                this.loadScripts('appointment');
+            },
+
+            setupEventListeners() {
+                document.querySelectorAll('.category-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        this.loadScripts(e.currentTarget.dataset.category);
+                    });
+                });
+            },
+
+            loadScripts(category) {
+                const container = document.getElementById('scripts-container');
+                const scripts = this.scripts[category] || [];
+
+                const header = document.querySelector('.content-title');
+                const categoryNames = {
+                    appointment: 'Appointment Confirmation Scripts',
+                    greeting: 'Greetings & Introduction Scripts',
+                    roofing: 'Roofing Inquiry Scripts',
+                    pricing: 'Pricing & Quote Scripts',
+                    followup: 'Follow-up Message Scripts',
+                    closing: 'Closing & Thank You Scripts'
+                };
+
+                header.textContent = categoryNames[category] || 'Scripts';
+
+                container.innerHTML = scripts.map(script => `
+                    <div class="script-card">
+                        <div class="script-header">
+                            <h3 class="script-title">${script.title}</h3>
+                            <span class="script-badge badge-${category}">${category.toUpperCase()}</span>
+                        </div>
+                        ${script.variables.length > 0 ? `
+                            <div class="script-variables">
+                                ${script.variables.map(v => `<span class="variable-tag">${v}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="script-content">${script.content}</div>
+                    </div>
+                `).join('');
+            }
+        };
+
+        // Response generation
+        function generateResponse() {
+            const message = document.getElementById('test-message').value;
+            const responseDiv = document.getElementById('suggested-response');
+
+            // Simulate AI response generation
+            const responses = {
+                'confirm': "Hi! I can help you confirm your appointment. Let me pull up your information. What's the name on the appointment?",
+                'reschedule': "I understand you need to reschedule. I can help with that! What date and time would work better for you?",
+                'inspection': "Hi! Thanks for your message. I see you're asking about your roofing inspection tomorrow. Let me confirm the details for you. What time was your appointment scheduled for?",
+                'quote': "I'd be happy to help you get a quote! We offer free estimates. When would be a good time for our specialist to visit?",
+                'default': "Hi! Thanks for contacting Panda Exteriors. I'm Riley, and I'll help you with your request. Could you provide me with more details?"
+            };
+
+            let response = responses.default;
+            const lowerMessage = message.toLowerCase();
+
+            if (lowerMessage.includes('confirm')) response = responses.inspection;
+            else if (lowerMessage.includes('reschedule')) response = responses.reschedule;
+            else if (lowerMessage.includes('inspection')) response = responses.inspection;
+            else if (lowerMessage.includes('quote') || lowerMessage.includes('price')) response = responses.quote;
+
+            responseDiv.innerHTML = `
+                <strong style="color: var(--primary);">Riley would respond:</strong><br>
+                ${response}
+            `;
+        }
+
+        function saveScripts() {
+            alert('Scripts saved successfully! Riley has been updated with the latest templates.');
+        }
+
+        function testScript() {
+            const testWindow = window.open('', 'Test Script', 'width=400,height=600');
+            testWindow.document.write(`
+                <html>
+                <head><title>Test Script</title></head>
+                <body style="font-family: Arial; padding: 20px;">
+                    <h3>Test SMS Conversation</h3>
+                    <div style="background: #e5e5e5; padding: 10px; margin: 10px 0; border-radius: 10px;">
+                        Customer: Hi, I need to confirm my appointment
+                    </div>
+                    <div style="background: #007aff; color: white; padding: 10px; margin: 10px 0; border-radius: 10px; text-align: right;">
+                        Riley: ${document.querySelector('.script-content').textContent.substring(0, 200)}...
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+
+        function exportScripts() {
+            const scripts = TrainingModule.scripts;
+            const blob = new Blob([JSON.stringify(scripts, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'riley-training-scripts.json';
+            a.click();
+        }
+
+        function trainResponse() {
+            const message = document.getElementById('test-message').value;
+            const customResponse = prompt('Enter the custom response Riley should give for this type of message:');
+
+            if (customResponse) {
+                alert(`Training saved! Riley will now respond with this template when similar messages are received.`);
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            TrainingModule.init();
+        });
+    </script>
+</body>
+</html>

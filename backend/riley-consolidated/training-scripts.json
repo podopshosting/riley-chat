@@ -1,0 +1,121 @@
+{
+  "appointment_confirmation": {
+    "initial": {
+      "template": "Hi {customer_name}! This is Riley from Panda Exteriors confirming your {service_type} inspection appointment for {date} at {time}.\n\nAddress: {address}\n\nOur specialist will arrive within the scheduled time window. They'll be in a Panda Exteriors vehicle and uniform.\n\nPlease ensure someone 18+ is present during the inspection.\n\nReply YES to confirm or CALL to speak with someone.\n\nThank you for choosing Panda Exteriors!",
+      "variables": ["customer_name", "service_type", "date", "time", "address"],
+      "triggers": ["appointment", "confirm", "inspection scheduled"]
+    },
+    "day_before": {
+      "template": "Hi {customer_name}! This is a friendly reminder from Panda Exteriors about your appointment tomorrow at {time}.\n\n{specialist_name} will be your specialist. They'll text you when they're on the way!\n\nIf you need to reschedule, please call us at (555) 123-4567.\n\nSee you tomorrow! 🏠",
+      "variables": ["customer_name", "time", "specialist_name"],
+      "triggers": ["reminder", "tomorrow"]
+    },
+    "on_the_way": {
+      "template": "Hi {customer_name}! {specialist_name} from Panda Exteriors is on the way to your property!\n\nETA: Approximately {eta_minutes} minutes\n\nThey're driving a white truck with our Panda logo. Please have any pets secured.\n\nThanks for your patience!",
+      "variables": ["customer_name", "specialist_name", "eta_minutes"],
+      "triggers": ["on the way", "coming", "headed"]
+    },
+    "arrival": {
+      "template": "Hi {customer_name}! {specialist_name} from Panda Exteriors has arrived at your property.\n\nThey'll be at your door shortly. Thank you for choosing us!",
+      "variables": ["customer_name", "specialist_name"],
+      "triggers": ["arrived", "here"]
+    }
+  },
+  "lead_qualification": {
+    "initial_interest": {
+      "template": "Hi {customer_name}! Thanks for your interest in {service_type}. I'm Riley from Panda Exteriors.\n\nWe offer free inspections and estimates. Would you like to schedule one this week?\n\nReply YES to schedule or CALL to speak with someone at (555) 123-4567.",
+      "variables": ["customer_name", "service_type"],
+      "triggers": ["interested", "need", "looking for", "quote"]
+    },
+    "urgency_check": {
+      "template": "I understand you need {service_type} help. Is this for:\n\n1. Emergency repair (24-48 hours)\n2. Scheduled maintenance\n3. Future planning\n\nPlease reply with 1, 2, or 3, and I'll connect you with the right specialist.",
+      "variables": ["service_type"],
+      "triggers": ["urgent", "emergency", "asap", "leak", "damage"]
+    }
+  },
+  "service_specific": {
+    "roofing": {
+      "template": "Great! For roofing services, we offer:\n\n✓ Free comprehensive inspection\n✓ Detailed photo report\n✓ Insurance claim assistance\n✓ Warranty on all work\n\nOur specialists are available Monday-Saturday. What day works best for your free inspection?",
+      "triggers": ["roof", "shingle", "leak", "roofing"]
+    },
+    "siding": {
+      "template": "Excellent choice! Our siding services include:\n\n✓ Multiple material options\n✓ Energy-efficient solutions\n✓ Lifetime warranty available\n✓ Free color consultation\n\nWould you prefer a morning or afternoon appointment for your free estimate?",
+      "triggers": ["siding", "vinyl", "exterior", "hardie"]
+    },
+    "windows": {
+      "template": "Our window replacement service includes:\n\n✓ Energy Star certified options\n✓ Professional installation\n✓ Warranty coverage\n✓ Financing available\n\nLet's schedule your free consultation. What's your zip code so I can check availability?",
+      "triggers": ["window", "glass", "draft", "energy"]
+    },
+    "gutters": {
+      "template": "For gutter services, we provide:\n\n✓ Seamless gutter installation\n✓ Gutter guard options\n✓ Cleaning and repair\n✓ Free flow test\n\nWhen would you like us to inspect your gutters?",
+      "triggers": ["gutter", "drainage", "downspout", "water"]
+    }
+  },
+  "objection_handling": {
+    "price_concern": {
+      "template": "I understand price is important. That's why we offer:\n\n• Free estimates with no obligation\n• Competitive pricing\n• Flexible financing options\n• Price matching on written quotes\n\nWould you like to schedule a free estimate to see your actual cost?",
+      "triggers": ["expensive", "cost", "afford", "price", "cheaper"]
+    },
+    "time_concern": {
+      "template": "I appreciate you're busy! Our process is designed to be convenient:\n\n• Inspection takes only 30-45 minutes\n• You don't need to be home for exterior work\n• We work around your schedule\n• Same-week appointments available\n\nWhat time of day is usually best for you?",
+      "triggers": ["busy", "time", "schedule", "how long"]
+    },
+    "trust_concern": {
+      "template": "Great question! Panda Exteriors is:\n\n✓ Fully licensed and insured\n✓ A+ BBB rated\n✓ 500+ five-star reviews\n✓ 10+ years serving your area\n✓ Warranty on all work\n\nWould you like references from neighbors in your area?",
+      "triggers": ["legitimate", "scam", "trust", "references", "reviews"]
+    }
+  },
+  "follow_up": {
+    "after_inspection": {
+      "template": "Hi {customer_name}! Thank you for letting us inspect your {service_type} yesterday.\n\nYour detailed report with photos has been emailed to you. Did you have any questions about our findings?\n\nI'm here to help explain anything! Reply or call (555) 123-4567.",
+      "variables": ["customer_name", "service_type"],
+      "triggers": ["inspection", "report", "yesterday"]
+    },
+    "quote_follow_up": {
+      "template": "Hi {customer_name}! Just following up on the quote we sent for your {service_type} project.\n\nThe quote is valid for 30 days and includes our warranty. Did you have any questions about the pricing or process?\n\nReply CALL if you'd like to discuss!",
+      "variables": ["customer_name", "service_type"],
+      "triggers": ["quote", "estimate", "pricing"]
+    },
+    "scheduling_follow_up": {
+      "template": "Hi {customer_name}! I wanted to check if you're ready to schedule your {service_type} project.\n\nWe have openings next week. As a reminder, we offer:\n• Warranty protection\n• Insurance assistance\n• Flexible payment\n\nReply YES to schedule or LATER if you need more time.",
+      "variables": ["customer_name", "service_type"],
+      "triggers": ["ready", "schedule", "book"]
+    }
+  },
+  "closing": {
+    "thank_you": {
+      "template": "Thank you {customer_name}! We appreciate your business and look forward to taking care of your home.\n\nIf you need anything, we're just a text away!\n\n- The Panda Exteriors Team",
+      "variables": ["customer_name"],
+      "triggers": ["thanks", "thank you", "appreciate"]
+    },
+    "referral_request": {
+      "template": "Hi {customer_name}! We hope you're happy with your recent {service_type} project.\n\nIf you know anyone who could use our services, we'd appreciate the referral! We offer a $100 credit for each successful referral.\n\nThanks for being a valued customer!",
+      "variables": ["customer_name", "service_type"],
+      "triggers": ["referral", "recommend", "friend"]
+    }
+  },
+  "special_situations": {
+    "storm_response": {
+      "template": "STORM DAMAGE ALERT: We're mobilizing crews for emergency repairs.\n\nFor immediate assistance:\n• Reply URGENT for 24-hour service\n• Reply INSPECT for free damage assessment\n• Call (555) 999-8888 for emergencies\n\nWe're here to help! Stay safe.",
+      "triggers": ["storm", "hail", "wind", "tornado", "hurricane", "damage"]
+    },
+    "insurance_claim": {
+      "template": "We work directly with all insurance companies! Here's how we help:\n\n1. Free damage documentation\n2. Meet with your adjuster\n3. Ensure full coverage\n4. Handle paperwork\n5. Only collect your deductible\n\nWould you like us to start your claim process?",
+      "triggers": ["insurance", "claim", "adjuster", "deductible"]
+    },
+    "seasonal_promotion": {
+      "template": "🎉 SPECIAL OFFER: {promotion_details}\n\nThis offer is valid through {end_date}. Limited spots available!\n\nReply NOW to claim your discount or call (555) 123-4567.\n\n*Cannot be combined with other offers",
+      "variables": ["promotion_details", "end_date"],
+      "triggers": ["special", "discount", "promotion", "sale"]
+    }
+  },
+  "conversation_flow": {
+    "greeting": ["hi", "hello", "hey", "good morning", "good afternoon"],
+    "appointment_intent": ["appointment", "schedule", "book", "inspection", "estimate"],
+    "service_intent": ["roof", "siding", "window", "gutter", "exterior"],
+    "urgency_indicators": ["asap", "urgent", "emergency", "today", "immediately", "leak"],
+    "positive_responses": ["yes", "sure", "ok", "sounds good", "perfect", "great"],
+    "negative_responses": ["no", "not interested", "stop", "cancel", "never mind"],
+    "question_indicators": ["?", "how", "what", "when", "where", "why", "cost", "price"]
+  }
+}
