@@ -682,9 +682,6 @@
                     <button class="nav-tab" data-tab="webchat" onclick="switchTab('webchat')">
                         Web Chat
                     </button>
-                    <button class="nav-tab" data-tab="hours" onclick="switchTab('hours')">
-                        Hours
-                    </button>
                     <button class="nav-tab" data-tab="admin" id="adminTab" onclick="switchTab('admin')">
                         Admin
                     </button>
@@ -779,6 +776,11 @@
                                    value="https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod/riley/twilio"
                                    readonly>
                         </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h2 class="section-title">Business Hours Configuration</h2>
+                        <iframe src="business-hours-config.html" style="width: 100%; height: 600px; border: 1px solid var(--border-light); border-radius: 8px;"></iframe>
                     </div>
                 </div>
             </div>
@@ -977,10 +979,13 @@
                 'kanban': 'conversations',
                 'dashboard': 'analytics',
                 'training': 'training',
+                'crm': 'conversations', // CRM requires conversations permission
+                'webchat': 'conversations', // Web Chat requires conversations permission
                 'admin': 'admin'
             };
 
-            if (!currentUser.permissions.includes(permissionMap[tabName])) {
+            const requiredPermission = permissionMap[tabName];
+            if (requiredPermission && !currentUser.permissions.includes(requiredPermission)) {
                 return;
             }
 
@@ -988,13 +993,19 @@
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            const targetTab = document.querySelector(`[data-tab="${tabName}"]`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
 
             // Update content
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            document.getElementById(`${tabName}-tab`).classList.add('active');
+            const targetContent = document.getElementById(`${tabName}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
         }
 
         // Toggle theme
