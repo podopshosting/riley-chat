@@ -4,7 +4,7 @@
 window.RileyAPI = {
     // API Configuration
     config: {
-        baseUrl: 'https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod',
+        baseUrl: 'https://jtpw1iado5.execute-api.us-east-2.amazonaws.com/prod',
         timeout: 30000
     },
 
