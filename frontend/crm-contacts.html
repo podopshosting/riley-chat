@@ -414,6 +414,7 @@
         <div class="view-switcher">
             <button class="view-btn active" onclick="switchView('kanban')">📋 Kanban</button>
             <button class="view-btn" onclick="switchView('table')">📊 Table</button>
+            <button class="view-btn" onclick="switchView('collections')">🏷️ Collections</button>
         </div>
 
         <!-- Filters -->
@@ -502,6 +503,76 @@
                 </thead>
                 <tbody id="contacts-table-body"></tbody>
             </table>
+        </div>
+
+        <!-- Collections View -->
+        <div id="collections-view" style="display: none;">
+            <div style="background: var(--bg); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">📧 PodOps Connect Collections</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Select tags from your PodOps Connect campaigns to view contacts and their engagement metrics.</p>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Select Tags</label>
+                        <select id="collection-tags" multiple style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem; min-height: 150px;">
+                            <option value="loading">Loading tags...</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn btn-primary" onclick="loadCollectionContacts()" style="margin-top: 1.9rem;">
+                            🔍 Load Contacts
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshTags()">
+                            🔄 Refresh Tags
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="collection-stats" style="display: none; background: var(--bg); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border); margin-bottom: 2rem;">
+                <h4 style="margin-bottom: 1rem;">📊 Collection Stats</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Contacts</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="stat-total">0</div>
+                    </div>
+                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">Email Opens</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="stat-opens">0</div>
+                    </div>
+                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">Clicks</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="stat-clicks">0</div>
+                    </div>
+                    <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 0.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">SMS Delivered</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="stat-sms">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="collection-contacts" style="background: var(--bg); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border);">
+                            <th style="text-align: left; padding: 0.75rem;">Name</th>
+                            <th style="text-align: left; padding: 0.75rem;">Email</th>
+                            <th style="text-align: left; padding: 0.75rem;">Phone</th>
+                            <th style="text-align: center; padding: 0.75rem;">📧 Opens</th>
+                            <th style="text-align: center; padding: 0.75rem;">🔗 Clicks</th>
+                            <th style="text-align: center; padding: 0.75rem;">📱 SMS</th>
+                            <th style="text-align: left; padding: 0.75rem;">Tags</th>
+                        </tr>
+                    </thead>
+                    <tbody id="collection-contacts-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                                Select tags and click "Load Contacts" to view collection data
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -633,15 +704,15 @@
             document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            if (view === 'kanban') {
-                document.getElementById('kanban-view').style.display = 'grid';
-                document.getElementById('table-view').style.display = 'none';
-            } else {
-                document.getElementById('kanban-view').style.display = 'none';
-                document.getElementById('table-view').style.display = 'block';
-            }
+            document.getElementById('kanban-view').style.display = view === 'kanban' ? 'grid' : 'none';
+            document.getElementById('table-view').style.display = view === 'table' ? 'block' : 'none';
+            document.getElementById('collections-view').style.display = view === 'collections' ? 'block' : 'none';
 
-            renderView();
+            if (view === 'collections') {
+                refreshTags();
+            } else {
+                renderView();
+            }
         }
 
         // Render current view
@@ -831,6 +902,62 @@
 
         function showCustomFieldsModal() {
             alert('Custom fields management coming soon!');
+        }
+
+        // Collections functions
+        async function refreshTags() {
+            try {
+                const response = await fetch(`${API_URL}/podops/tags`);
+                const data = await response.json();
+
+                const select = document.getElementById('collection-tags');
+                select.innerHTML = data.tags.map(tag =>
+                    `<option value="${tag.tagId}">${tag.tagName}</option>`
+                ).join('');
+            } catch (error) {
+                console.error('Error loading tags:', error);
+                document.getElementById('collection-tags').innerHTML =
+                    '<option value="">Error loading tags</option>';
+            }
+        }
+
+        async function loadCollectionContacts() {
+            const select = document.getElementById('collection-tags');
+            const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
+
+            if (selectedTags.length === 0) {
+                alert('Please select at least one tag');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/podops/contacts?tags=${selectedTags.join(',')}`);
+                const data = await response.json();
+
+                // Update stats
+                document.getElementById('collection-stats').style.display = 'block';
+                document.getElementById('stat-total').textContent = data.contacts.length;
+                document.getElementById('stat-opens').textContent = data.stats.totalOpens || 0;
+                document.getElementById('stat-clicks').textContent = data.stats.totalClicks || 0;
+                document.getElementById('stat-sms').textContent = data.stats.totalSMS || 0;
+
+                // Render contacts table
+                const tbody = document.getElementById('collection-contacts-body');
+                tbody.innerHTML = data.contacts.map(contact => `
+                    <tr>
+                        <td>${contact.name || 'N/A'}</td>
+                        <td>${contact.email || 'N/A'}</td>
+                        <td>${contact.phone || 'N/A'}</td>
+                        <td>${contact.emailOpens || 0}</td>
+                        <td>${contact.clicks || 0}</td>
+                        <td>${contact.smsDelivered || 0}</td>
+                        <td>${(contact.tags || []).join(', ')}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading collection contacts:', error);
+                alert('Error loading contacts');
+            }
         }
 
         // Initialize on load
