@@ -706,7 +706,7 @@
             async loadConversations() {
                 try {
                     // Load from API - real data only
-                    const response = await fetch('https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod/riley/conversations');
+                    const response = await fetch('https://jtpw1iado5.execute-api.us-east-2.amazonaws.com/prod/riley/conversations');
                     const data = await response.json();
 
                     if (data.conversations && data.conversations.length > 0) {

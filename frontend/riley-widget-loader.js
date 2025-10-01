@@ -7,7 +7,7 @@
     const configData = script ? script.getAttribute('data-riley-config') : null;
 
     let config = {
-        apiUrl: 'https://cbtr8iqu56.execute-api.us-east-1.amazonaws.com/prod',
+        apiUrl: 'https://jtpw1iado5.execute-api.us-east-2.amazonaws.com/prod',
         companyName: 'Panda Exteriors',
         primaryColor: '#4F46E5',
         position: 'bottom-right',
